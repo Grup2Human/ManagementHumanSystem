@@ -15,18 +15,5 @@ public class RegisterModel implements Serializable {
     private Long authId;
     private String username;
     private String email;
+    private String email3;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
