@@ -26,6 +26,7 @@ public class Auth extends BaseEntity{
     private String photo;
     @Column(unique = true)
     @Email
+
     private String email;
     private String password;
     //private String activationCode;

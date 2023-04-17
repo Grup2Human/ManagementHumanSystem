@@ -1,3 +1,6 @@
 rootProject.name = 'ManagementSystemHumanResources'
 include 'AuthMicroService'
+include 'api-gateway-service'
+include 'config-server'
+include 'config-server-git'
 
