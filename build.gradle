@@ -41,6 +41,8 @@ allprojects{
         implementation libs.swaggerui
         implementation libs.springBootValidation
         implementation libs.jwt
+        implementation libs.springCloudConfigClient
+
     }
 
 }
