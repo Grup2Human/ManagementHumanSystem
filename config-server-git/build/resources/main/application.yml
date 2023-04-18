@@ -21,4 +21,4 @@ spring:
           default-label: main
           skip-ssl-validation: true
           username: ${config_username}
-          password: ${GIT_JAVA6_KEY}
+          password: ${GIT_GROUP2_KEY}
