@@ -1,8 +1,10 @@
 package com.bilgeadam.controller;
 
 
+import com.bilgeadam.dto.request.ChangeStatusRequestDto;
 import com.bilgeadam.dto.request.DoLoginRequestDto;
 import com.bilgeadam.dto.request.RegisterRequestDto;
+import com.bilgeadam.dto.response.AuthRegisterResponseDto;
 import com.bilgeadam.exception.AuthServiceException;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.repository.entity.Auth;
@@ -25,7 +27,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(REGISTER)
-    public ResponseEntity<Auth> register(@RequestBody @Valid RegisterRequestDto dto) {
+    public ResponseEntity<AuthRegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto dto) {
         if(!dto.getPassword().equals(dto.getRepassword()))
             throw new AuthServiceException(EErrorType.REGISTER_ERROR_PASSWORD_UNMATCH);
         return ResponseEntity.ok(authService.register(dto));
@@ -34,6 +36,10 @@ public class AuthController {
     @PostMapping(LOGIN)
     public ResponseEntity<String> doLogin(@RequestBody DoLoginRequestDto dto) {
         return ResponseEntity.ok(authService.doLogin(dto));
+    }
+    @PostMapping(CHANGESTATUS)
+    public ResponseEntity<Boolean> activateStatus (@RequestBody ChangeStatusRequestDto dto) {
+        return ResponseEntity.ok(authService.changeStatus(dto));
     }
 
     @GetMapping(GETALL)
