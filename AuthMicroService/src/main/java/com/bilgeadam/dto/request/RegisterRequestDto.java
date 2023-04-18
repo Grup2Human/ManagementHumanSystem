@@ -25,13 +25,4 @@ public class RegisterRequestDto {
             regexp = "^(?=.*[0-12])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=*!])(?=\\S+$).{8,}$")
     String password;
     String repassword;
-    @NotBlank(message="Şifre boş geçilemez")
-    private String name;
-    private String nameSecond;
-    @NotBlank(message="Şifre boş geçilemez")
-    private String surname;
-    private String surnameSecond;
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private EStatus status=EStatus.PENDING;
 }

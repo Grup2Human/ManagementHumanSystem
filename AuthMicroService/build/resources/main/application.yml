@@ -8,11 +8,16 @@ spring:
     url: jdbc:postgresql://localhost:5432/Group2Auth
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: user
+    password: root
 
 # !!!!! DİKKAT !!!!!
 # Key/Value kullanımında : dan sonra mutlaka boşluk bırakın
@@ -25,3 +30,15 @@ spring:
 # Yani secret-key = ${JAVA_SECRETKEY},   ${JAVA_SECRETKEY}= ortam değişkenlerinde olmalıdır.
 # Yani issuer = ${JAVA6_ISSUER},   ${JAVA6_ISSUER}= ortam değişkenlerinde olmalıdır.
 # Modify Run Configuration -> Modify Options -> Environment Variables -> JAVA_SECRETKEY=example;JAVA6_ISSUER=example
+
+jwt:
+  secretkey: ${JAVA_SECRETKEY}
+  issuer: ${JAVA6_ISSUER}
+  audience: ${JAVA6_AUDIENCE}
+
+rabbitmq:
+  exchange-auth: auth-exchange
+  registerkey: register-key
+  queueRegister: register-queue
+  changestatusbindingkey: change-status-key
+  changestatusqueue: change-status-queue

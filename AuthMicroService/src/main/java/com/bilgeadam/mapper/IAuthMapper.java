@@ -2,6 +2,9 @@ package com.bilgeadam.mapper;
 
 import com.bilgeadam.dto.request.RegisterRequestDto;
 import com.bilgeadam.dto.request.UserProfileSaveRequestDto;
+import com.bilgeadam.dto.response.AuthRegisterResponseDto;
+import com.bilgeadam.rabbitmq.model.ChangeStatusModel;
+import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.repository.entity.Auth;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,5 +17,10 @@ public interface IAuthMapper {
     Auth toAuth(final RegisterRequestDto dto);
     @Mapping(target = "authid", source = "id") //Target:UserProfileSaveRequest //Source: Auth
     UserProfileSaveRequestDto fromAuth(final Auth auth);
+    AuthRegisterResponseDto toAuthResponseDto (final Auth auth);
+    @Mapping(source = "id",target = "authId")
+    RegisterModel toRegisterModel(final Auth auth);
+    @Mapping(source = "id",target = "authId")
+    ChangeStatusModel toActivationModel(final Auth auth);
 
 }
