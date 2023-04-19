@@ -1,0 +1,21 @@
+server:
+  port: 8889
+spring:
+#  zipkin:
+#    enabled: true
+#    base-url: ${zipkin_url}
+#    service:
+#      name: config-server-git
+  application:
+    name: config-server-git
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${java6configuri2}
+          default-label: main
+          skip-ssl-validation: true
+          username: ${java6configusername}
+          password: ${java6configpassword}
+
+
