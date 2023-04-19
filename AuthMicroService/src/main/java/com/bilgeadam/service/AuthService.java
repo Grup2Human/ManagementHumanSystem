@@ -91,9 +91,12 @@ public class AuthService extends ServiceManager<Auth,Long> {
             throw new AuthServiceException(EErrorType.ACTIVATE_CODE_ERROR);
         }
     }
-    public List<Auth> findAll (String parola) {
-        if(!(parola.equals("Cukibik") || parola.equals("Fikibok")))
-            throw new AuthServiceException(EErrorType.METHOD_MIS_MATCH_ERROR);
+    public List<Auth> findAll (String token) {
+        Optional <Long> id= tokenManager.getIdFromToken(token);
+        if(id.isEmpty())
+            throw new AuthServiceException(EErrorType.INVALID_TOKEN);
+        if (findById(id.get()).isEmpty())
+            throw new AuthServiceException(EErrorType.INVALID_TOKEN);
         return findAll();
     }
 }
