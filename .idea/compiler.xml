@@ -13,6 +13,17 @@
         <module name="ManagementSystemHumanResources.main" />
         <module name="ManagementSystemHumanResources.AuthMicroService.main" />
       </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$PROJECT_DIR$/../Boost/Spring/Java6Mono/Java6Mono/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.26/8f8cf0372abf564913e9796623aac4c8ea44025a/lombok-1.18.26.jar" />
+          <entry name="$PROJECT_DIR$/../Boost/Spring/Java6Mono/Java6Mono/caches/modules-2/files-2.1/org.mapstruct/mapstruct-processor/1.5.3.Final/dce418bedafd71ff8dd2cef15006c0fee788b073/mapstruct-processor-1.5.3.Final.jar" />
+        </processorPath>
+        <module name="ManagementSystemHumanResources.UserDetailsMicroService.main" />
+        <module name="com.bilgeadam.ManagementSystemHumanResources.UserMicroService.main" />
+        <module name="ManagementSystemHumanResources.main" />
+        <module name="ManagementSystemHumanResources.AuthMicroService.main" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="17" />
   </component>

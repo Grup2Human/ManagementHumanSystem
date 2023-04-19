@@ -33,7 +33,7 @@ spring:
 jwt:
   secretkey: ${JAVA_SECRETKEY}
   issuer: ${JAVA6_ISSUER}
-  audience: ${JAVA6_AUDIENCE}
+  audience: 122235
 
 rabbitmq:
   exchange-auth: auth-exchange
