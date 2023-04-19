@@ -2,6 +2,7 @@ package com.bilgeadam.mapper;
 
 import com.bilgeadam.dto.request.UpdateUserRequestDto;
 import com.bilgeadam.dto.request.UserProfileSaveRequestDto;
+import com.bilgeadam.dto.response.UserProfileSummaryResponseDto;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.repository.entity.UserProfile;
 import javax.annotation.processing.Generated;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-04-18T11:32:32+0300",
+    date = "2023-04-19T15:06:57+0300",
     comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.6 (Amazon.com Inc.)"
 )
 @Component
@@ -62,5 +63,22 @@ public class IUserProfileMapperImpl implements IUserProfileMapper {
         userProfile.phoneNumber( dto.getPhoneNumber() );
 
         return userProfile.build();
+    }
+
+    @Override
+    public UserProfileSummaryResponseDto toUserProfileSummaryResponse(UserProfile userProfile) {
+        if ( userProfile == null ) {
+            return null;
+        }
+
+        UserProfileSummaryResponseDto.UserProfileSummaryResponseDtoBuilder userProfileSummaryResponseDto = UserProfileSummaryResponseDto.builder();
+
+        userProfileSummaryResponseDto.name( userProfile.getName() );
+        userProfileSummaryResponseDto.surname( userProfile.getSurname() );
+        userProfileSummaryResponseDto.email( userProfile.getEmail() );
+        userProfileSummaryResponseDto.photo( userProfile.getPhoto() );
+        userProfileSummaryResponseDto.address( userProfile.getAddress() );
+
+        return userProfileSummaryResponseDto.build();
     }
 }

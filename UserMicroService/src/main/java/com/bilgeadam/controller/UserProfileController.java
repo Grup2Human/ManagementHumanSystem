@@ -1,13 +1,14 @@
 package com.bilgeadam.controller;
 
 import com.bilgeadam.dto.request.UpdateUserRequestDto;
+import com.bilgeadam.dto.response.UserProfileSummaryResponseDto;
+import com.bilgeadam.repository.entity.UserProfile;
 import com.bilgeadam.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.bilgeadam.constants.EndPoints.*;
 
@@ -19,5 +20,14 @@ public class UserProfileController {
     @PutMapping(UPDATE)
     public ResponseEntity<Boolean> updateUser(@RequestBody UpdateUserRequestDto dto) {
         return ResponseEntity.ok(userProfileService.updateUser(dto));
+    }
+    @GetMapping(GETALL)
+    public ResponseEntity<List<UserProfileSummaryResponseDto>> findAll() {
+        return ResponseEntity.ok(userProfileService.findAllSummary());
+    }
+
+    @GetMapping(GETBYID)
+    public ResponseEntity<UserProfile> findById(String token) {
+        return ResponseEntity.ok(userProfileService.findByIdWithToken(token));
     }
 }
