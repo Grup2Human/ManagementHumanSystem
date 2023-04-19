@@ -40,13 +40,13 @@ allprojects{
         implementation libs.mapstruct
         implementation libs.swaggerui
         implementation libs.springBootValidation
-<<<<<<< HEAD
+
         implementation libs.springCloudConfigClient
-=======
+
         implementation libs.jwt
         implementation libs.springCloudConfigClient
 
->>>>>>> a5e9f865e79e5671923b11930495f1065da5b310
+
     }
 
 }

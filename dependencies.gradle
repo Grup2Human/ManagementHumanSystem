@@ -8,13 +8,9 @@ ext{
             mapstruct               : "1.5.3.Final",
             postgresql              : "42.5.4",
             swaggerui               : "1.6.14",
-<<<<<<< HEAD
-            springCloud             : "3.1.5"
-=======
             jwt                     : "4.3.0",
             springCloud             : "3.1.6",
             circuitBreaker          : "2.1.6"
->>>>>>> a5e9f865e79e5671923b11930495f1065da5b310
     ]
     /**
      * Bu kısımda bağımlılıkların listesini oluşturuyoruz. K/V
