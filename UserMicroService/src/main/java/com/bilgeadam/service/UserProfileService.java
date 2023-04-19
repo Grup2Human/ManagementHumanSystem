@@ -2,6 +2,7 @@ package com.bilgeadam.service;
 
 import com.bilgeadam.dto.request.UpdateUserRequestDto;
 import com.bilgeadam.dto.request.UserProfileSaveRequestDto;
+import com.bilgeadam.dto.response.UserProfileSummaryResponseDto;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
 import com.bilgeadam.mapper.IUserProfileMapper;
@@ -11,8 +12,12 @@ import com.bilgeadam.repository.IUserProfileRepository;
 import com.bilgeadam.repository.entity.UserProfile;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -70,4 +75,24 @@ public class UserProfileService extends ServiceManager<UserProfile,Long> {
             update(userProfile.get());
             return true;
         }
+
+    public UserProfile findByIdWithToken(String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        Optional<UserProfile> userProfile = repository.findOptionalByAuthId(authId.get());
+        if (userProfile.isEmpty())
+            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+        return userProfile.get();
+    }
+
+    public List<UserProfileSummaryResponseDto> findAllSummary() {
+        List<UserProfile> userProfiles = findAll();
+        List<UserProfileSummaryResponseDto> userProfileSummaryResponseDtoList = new ArrayList<>();
+        userProfiles.forEach(x-> {
+            userProfileSummaryResponseDtoList.add(IUserProfileMapper.INSTANCE.toUserProfileSummaryResponse(x));
+        });
+        return userProfileSummaryResponseDtoList;
+    }
+
 }
