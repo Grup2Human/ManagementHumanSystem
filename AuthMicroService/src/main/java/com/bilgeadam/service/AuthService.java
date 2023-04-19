@@ -14,6 +14,7 @@ import com.bilgeadam.repository.entity.Auth;
 import com.bilgeadam.utility.CodeGenerator;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -96,8 +97,8 @@ public class AuthService extends ServiceManager<Auth,Long> {
         }
     }
     public List<Auth> findAll (String token) {
-        Optional <Long> id= tokenManager.getIdFromToken(token);
-        if(id.isEmpty())
+        Optional<Long> id = tokenManager.getIdFromToken(token);
+        if (id.isEmpty())
             throw new AuthServiceException(EErrorType.INVALID_TOKEN);
         if (findById(id.get()).isEmpty())
             throw new AuthServiceException(EErrorType.INVALID_TOKEN);
