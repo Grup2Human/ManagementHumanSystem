@@ -43,8 +43,8 @@ public class AuthController {
     }
 
     @GetMapping(GETALL)
-    public ResponseEntity<List<Auth>> findAll(String parola) {
-        return ResponseEntity.ok(authService.findAll(parola));
+    public ResponseEntity<List<Auth>> findAll(String token) {
+        return ResponseEntity.ok(authService.findAll(token));
     }
 
     @GetMapping("/message")
