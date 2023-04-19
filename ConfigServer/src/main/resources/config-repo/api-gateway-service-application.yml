@@ -1,0 +1,46 @@
+server:
+  port: 80
+spring:
+  #   zipkin:
+  #     enabled: true
+  #     base-url: http://localhost:9411
+  #     service:
+  #       name: api-gateway-service
+  main:
+    web-application-type: reactive
+  application:
+    name: api-gateway-service-application
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+      routes:
+        - id: AuthMicroService
+          predicates:
+            - Path=/auth/**    #localhost/api/v1/auth/findall
+          uri: http://localhost:7070 #localhost:7070/api/v1/auth/findall
+          filters:
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+            - name: CircuitBreaker
+              args:
+                enabled: true
+                fallbackUri: forward:/fallback/authmicroservice
+        - id: UserMicroService
+          predicates:
+            - Path=/user/**
+          uri: http://localhost:7071
+          filters:
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+            - name: CircuitBreaker
+              args:
+                enabled: true
+                fallbackUri: forward:/fallback/usermicroservice
+      default-filters:
+        - RewritePath= /(?<segment>.*), /$\{segment}
