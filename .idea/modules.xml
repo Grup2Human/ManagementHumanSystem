@@ -2,11 +2,24 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ManagementSystemHumanResources.iml" filepath="$PROJECT_DIR$/.idea/modules/ManagementSystemHumanResources.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ApiGatewayService/ManagementSystemHumanResources.ApiGatewayService.iml" filepath="$PROJECT_DIR$/.idea/modules/ApiGatewayService/ManagementSystemHumanResources.ApiGatewayService.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ApiGatewayService/ManagementSystemHumanResources.ApiGatewayService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ApiGatewayService/ManagementSystemHumanResources.ApiGatewayService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ApiGatewayService/ManagementSystemHumanResources.ApiGatewayService.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ApiGatewayService/ManagementSystemHumanResources.ApiGatewayService.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AuthMicroService/ManagementSystemHumanResources.AuthMicroService.iml" filepath="$PROJECT_DIR$/.idea/modules/AuthMicroService/ManagementSystemHumanResources.AuthMicroService.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/AuthMicroService/ManagementSystemHumanResources.AuthMicroService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AuthMicroService/ManagementSystemHumanResources.AuthMicroService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AuthMicroService/ManagementSystemHumanResources.AuthMicroService.test.iml" filepath="$PROJECT_DIR$/.idea/modules/AuthMicroService/ManagementSystemHumanResources.AuthMicroService.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ConfigServer/ManagementSystemHumanResources.ConfigServer.iml" filepath="$PROJECT_DIR$/.idea/modules/ConfigServer/ManagementSystemHumanResources.ConfigServer.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ConfigServer/ManagementSystemHumanResources.ConfigServer.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ConfigServer/ManagementSystemHumanResources.ConfigServer.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ConfigServer/ManagementSystemHumanResources.ConfigServer.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ConfigServer/ManagementSystemHumanResources.ConfigServer.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ConfigServerGit/ManagementSystemHumanResources.ConfigServerGit.iml" filepath="$PROJECT_DIR$/.idea/modules/ConfigServerGit/ManagementSystemHumanResources.ConfigServerGit.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ConfigServerGit/ManagementSystemHumanResources.ConfigServerGit.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ConfigServerGit/ManagementSystemHumanResources.ConfigServerGit.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ConfigServerGit/ManagementSystemHumanResources.ConfigServerGit.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ConfigServerGit/ManagementSystemHumanResources.ConfigServerGit.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/UserMicroService/ManagementSystemHumanResources.UserMicroService.iml" filepath="$PROJECT_DIR$/.idea/modules/UserMicroService/ManagementSystemHumanResources.UserMicroService.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/UserMicroService/ManagementSystemHumanResources.UserMicroService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/UserMicroService/ManagementSystemHumanResources.UserMicroService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/UserMicroService/ManagementSystemHumanResources.UserMicroService.test.iml" filepath="$PROJECT_DIR$/.idea/modules/UserMicroService/ManagementSystemHumanResources.UserMicroService.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ManagementSystemHumanResources.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ManagementSystemHumanResources.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ManagementSystemHumanResources.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ManagementSystemHumanResources.test.iml" />
     </modules>
   </component>
 </project>
