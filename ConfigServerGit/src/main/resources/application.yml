@@ -12,7 +12,7 @@ spring:
     config:
       server:
         git:
-          uri: ${java6configuri}
+          uri: ${java6configuri2}
           default-label: main
           skip-ssl-validation: true
           username: ${java6configusername}
