@@ -9,10 +9,18 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+<<<<<<< HEAD
             <option value="$PROJECT_DIR$/AuthMicroService" />
             <option value="$PROJECT_DIR$/api-gateway-service" />
             <option value="$PROJECT_DIR$/config-server" />
             <option value="$PROJECT_DIR$/config-server-git" />
+=======
+            <option value="$PROJECT_DIR$/ApiGatewayService" />
+            <option value="$PROJECT_DIR$/AuthMicroService" />
+            <option value="$PROJECT_DIR$/ConfigServer" />
+            <option value="$PROJECT_DIR$/ConfigServerGit" />
+            <option value="$PROJECT_DIR$/UserMicroService" />
+>>>>>>> a5e9f865e79e5671923b11930495f1065da5b310
           </set>
         </option>
       </GradleProjectSettings>

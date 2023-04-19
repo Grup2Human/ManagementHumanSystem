@@ -21,7 +21,10 @@ public enum EErrorType {
     URUN_EKLEME(2001,"Ürün ekleme başarısız oldu", INTERNAL_SERVER_ERROR),
     METHOD_MIS_MATCH_ERROR(2002,"Giriş yaptığınız değer, istenilen değerle uyuşmamaktadır",BAD_REQUEST),
     METHOD_NOT_VALID_ARGUMENT_ERROR(2003,"URL içinde eksik parametre gönderimi",BAD_REQUEST),
-    INVALID_PARAMETER(3001,"Geçersiz parametre girişi yaptınız", BAD_REQUEST);
+    INVALID_PARAMETER(3001,"Geçersiz parametre girişi yaptınız", BAD_REQUEST),
+    ACTIVATE_CODE_ERROR(4113,"Aktivasyon kod hatası",HttpStatus.BAD_REQUEST),
+    USER_NOT_FOUND(4112,"Böyle bie kullanıcı bulunamadı",HttpStatus.NOT_FOUND);
+
 
     private int code;
     private String message;
