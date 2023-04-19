@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.bilgeadam.repository.enums.EStatus.ACTIVE;
+
 @Service
 public class AuthService extends ServiceManager<Auth,Long> {
     private final IAuthRepository repository;
@@ -75,6 +77,8 @@ public class AuthService extends ServiceManager<Auth,Long> {
         Optional<Auth> auth = repository.findOptionalByEmailAndPassword(dto.getEmail(), dto.getPassword());
         if (auth.isEmpty())
             throw new AuthServiceException(EErrorType.LOGIN_ERROR_USERNAME_PASSWORD);
+        if (!auth.get().getStatus().equals(ACTIVE))
+            throw new AuthServiceException(EErrorType.NOT_ACTIVE_ACCOUNT);
         return tokenManager.createToken(auth.get().getId()).get();
     }
 
