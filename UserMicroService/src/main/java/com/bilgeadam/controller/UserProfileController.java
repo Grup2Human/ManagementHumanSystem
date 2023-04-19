@@ -27,7 +27,7 @@ public class UserProfileController {
     }
 
     @GetMapping(GETBYID)
-    public ResponseEntity<UserProfile> findById(String token) {
-        return ResponseEntity.ok(userProfileService.findByIdWithToken(token));
+    public ResponseEntity<UserProfile> findById(String token,Long id) {
+        return ResponseEntity.ok(userProfileService.findByIdWithToken(token,id));
     }
 }

@@ -76,11 +76,11 @@ public class UserProfileService extends ServiceManager<UserProfile,Long> {
             return true;
         }
 
-    public UserProfile findByIdWithToken(String token) {
+    public UserProfile findByIdWithToken(String token, Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
-        Optional<UserProfile> userProfile = repository.findOptionalByAuthId(authId.get());
+        Optional<UserProfile> userProfile = repository.findOptionalByAuthId(id);
         if (userProfile.isEmpty())
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         return userProfile.get();
