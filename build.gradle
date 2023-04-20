@@ -40,8 +40,12 @@ allprojects{
         implementation libs.mapstruct
         implementation libs.swaggerui
         implementation libs.springBootValidation
+
+        implementation libs.springCloudConfigClient
+
         implementation libs.jwt
         implementation libs.springCloudConfigClient
+
 
     }
 

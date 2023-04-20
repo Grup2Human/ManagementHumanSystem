@@ -80,7 +80,7 @@ public class UserProfileService extends ServiceManager<UserProfile,Long> {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
-        Optional<UserProfile> userProfile = repository.findOptionalById(id);
+        Optional<UserProfile> userProfile = repository.findOptionalByAuthId(id);
         if (userProfile.isEmpty())
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         return userProfile.get();
