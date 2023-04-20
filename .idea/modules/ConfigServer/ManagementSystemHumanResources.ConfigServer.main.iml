@@ -3,6 +3,9 @@
   <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/../../../ConfigServer/build/classes/java/main" />
     <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../ConfigServer/build/generated/sources/annotationProcessor/java/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../../ConfigServer/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
+    </content>
     <content url="file://$MODULE_DIR$/../../../ConfigServer/src/main">
       <sourceFolder url="file://$MODULE_DIR$/../../../ConfigServer/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../../ConfigServer/src/main/resources" type="java-resource" />
@@ -15,9 +18,9 @@
     <orderEntry type="library" name="Gradle: org.mapstruct:mapstruct:1.5.3.Final" level="project" />
     <orderEntry type="library" name="Gradle: org.springdoc:springdoc-openapi-ui:1.6.14" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-validation:2.7.10" level="project" />
+    <orderEntry type="library" name="Gradle: com.auth0:java-jwt:4.3.0" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.cloud:spring-cloud-starter-config:3.1.6" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.cloud:spring-cloud-config-client:3.1.6" level="project" />
-    <orderEntry type="library" name="Gradle: com.auth0:java-jwt:4.3.0" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.5" level="project" />
     <orderEntry type="library" name="Gradle: org.eclipse.jgit:org.eclipse.jgit.http.apache:5.13.1.202206130422-r" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-crypto:5.7.7" level="project" />
