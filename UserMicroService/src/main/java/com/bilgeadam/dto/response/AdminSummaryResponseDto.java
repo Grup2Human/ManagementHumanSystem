@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data // Data,get, set methodlarını tanımlar
 @NoArgsConstructor // Parametresiz constructor tanımlar
 @AllArgsConstructor // 1....n kadar olan tüm parametreli constructorları tanımlar
-public class UserProfileSummaryResponseDto {
+public class AdminSummaryResponseDto {
     private String name;
     private String surname;
     private String email;
