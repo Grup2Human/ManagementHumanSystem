@@ -11,6 +11,7 @@ import com.bilgeadam.rabbitmq.producer.ChangeStatusProducer;
 import com.bilgeadam.rabbitmq.producer.RegisterProducer;
 import com.bilgeadam.repository.IAuthRepository;
 import com.bilgeadam.repository.entity.Auth;
+import com.bilgeadam.repository.enums.ERole;
 import com.bilgeadam.utility.CodeGenerator;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
@@ -39,27 +40,34 @@ public class AuthService extends ServiceManager<Auth,Long> {
         this.changeStatusProducer = changeStatusProducer;
     }
 
-    public AuthRegisterResponseDto register(RegisterRequestDto dto) {
-        if(repository.isEmail(dto.getEmail()))
-            throw new AuthServiceException(EErrorType.REGISTER_ERROR_EMAIL);
-        Auth auth = IAuthMapper.INSTANCE.toAuth(dto);
-        /**
-         * Repo -> repository.save(auth); bu bana kaydettiği entityi döner
-         * Servi -> save(auth); bu da bana kaydettiği entityi döner
-         * direkt -> auth, bir şekilde kayıt edilen entity nin bilgileri istenir ve bunu döner.
-         */
+    public AuthRegisterResponseDto register(RegisterRequestDto dto,String adminPassword) {
+        if(!adminPassword.equals("admin1234")) {
+            throw new AuthServiceException(EErrorType.LOGIN_ERROR_ADMIN);
+        }
+            if (repository.isEmail(dto.getEmail()))
+                throw new AuthServiceException(EErrorType.REGISTER_ERROR_EMAIL);
+            Auth auth = IAuthMapper.INSTANCE.toAuth(dto);
+            /**
+             * Repo -> repository.save(auth); bu bana kaydettiği entityi döner
+             * Servi -> save(auth); bu da bana kaydettiği entityi döner
+             * direkt -> auth, bir şekilde kayıt edilen entity nin bilgileri istenir ve bunu döner.
+             */
 //        return repository.save(auth);
-        auth.setActivationCode(CodeGenerator.generateCode());
-        save(auth);
-        registerProducer.sendNewUser(IAuthMapper.INSTANCE.toRegisterModel(auth));
+//            auth.setActivationCode(CodeGenerator.generateCode());
+            auth.setRole(ERole.ADMIN);
+            auth.setStatus(ACTIVE);
+            save(auth);
+            registerProducer.sendNewUser(IAuthMapper.INSTANCE.toRegisterModel(auth));
 //        iUserProfileManager.save(IAuthMapper.INSTANCE.fromAuth(auth));
 //        createUserProducer.convertAndSend(SaveAuthModel.builder()
 //                        .authid(auth.getId())
 //                        .email(auth.getEmail())
 //                        .email(auth.getEmail())
 //                .build());
-        AuthRegisterResponseDto authRegisterResponseDto = IAuthMapper.INSTANCE.toAuthResponseDto(auth);
+            AuthRegisterResponseDto authRegisterResponseDto = IAuthMapper.INSTANCE.toAuthResponseDto(auth);
+
         return authRegisterResponseDto;
+
 
     }
 

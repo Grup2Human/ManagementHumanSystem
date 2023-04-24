@@ -27,10 +27,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(REGISTER)
-    public ResponseEntity<AuthRegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto dto) {
+    public ResponseEntity<AuthRegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto dto,String adminPassword) {
         if(!dto.getPassword().equals(dto.getRepassword()))
             throw new AuthServiceException(EErrorType.REGISTER_ERROR_PASSWORD_UNMATCH);
-        return ResponseEntity.ok(authService.register(dto));
+        return ResponseEntity.ok(authService.register(dto,adminPassword));
     }
 
     @PostMapping(LOGIN)

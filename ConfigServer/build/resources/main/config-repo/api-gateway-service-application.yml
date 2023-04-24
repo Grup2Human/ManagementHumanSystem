@@ -1,6 +1,5 @@
 server:
   port: 80
-
 spring:
   #   zipkin:
   #     enabled: true
@@ -10,7 +9,7 @@ spring:
   main:
     web-application-type: reactive
   application:
-    name: api-gateway-service
+    name: api-gateway-service-application
   cloud:
     gateway:
       globalcors:
@@ -37,10 +36,6 @@ spring:
           predicates:
             - Path=/user/**
           uri: http://localhost:7071
-        - id: user-service-follow
-          predicates:
-            - Path=/follow/**
-          uri: http://localhost:7071
           filters:
             - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
             - name: CircuitBreaker
@@ -48,4 +43,4 @@ spring:
                 enabled: true
                 fallbackUri: forward:/fallback/usermicroservice
       default-filters:
-        - RewritePath= /(?<segment>.*),/api/v1/$\{segment}
+        - RewritePath= /(?<segment>.*), /$\{segment}
