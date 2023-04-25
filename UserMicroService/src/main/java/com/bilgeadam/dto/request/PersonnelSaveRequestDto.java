@@ -9,16 +9,8 @@ import lombok.NoArgsConstructor;
 @Data // Data,get, set methodlarını tanımlar
 @NoArgsConstructor // Parametresiz constructor tanımlar
 @AllArgsConstructor // 1....n kadar olan tüm parametreli constructorları tanımlar
-public class UpdateUserRequestDto {
-    private String token;
-    private String name;
-    private String nameSecond;
-    private String surname;
-    private String surnameSecond;
-    private String phoneNumber;
-    private String photo;
-    private String address;
-    private String birthday;
-    private String birthPlace;
-    private Long TC;
+public class PersonnelSaveRequestDto {
+    Long authid;
+
+    String email;
 }
