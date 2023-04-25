@@ -1,7 +1,7 @@
 package com.bilgeadam.mapper;
 
 import com.bilgeadam.dto.request.AdminSaveRequestDto;
-import com.bilgeadam.dto.request.UpdateUserRequestDto;
+import com.bilgeadam.dto.request.UpdateAdminRequestDto;
 import com.bilgeadam.dto.response.AdminSummaryResponseDto;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.repository.entity.Admin;
@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-04-24T15:24:17+0300",
+    date = "2023-04-25T16:35:30+0300",
     comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.6 (Amazon.com Inc.)"
 )
 @Component
 public class IAdminMapperImpl implements IAdminMapper {
 
     @Override
-    public Admin toUserProfile(AdminSaveRequestDto dto) {
+    public Admin toAdminProfile(AdminSaveRequestDto dto) {
         if ( dto == null ) {
             return null;
         }
@@ -30,7 +30,7 @@ public class IAdminMapperImpl implements IAdminMapper {
     }
 
     @Override
-    public Admin toUserProfile(RegisterModel model) {
+    public Admin toAdminProfile(RegisterModel model) {
         if ( model == null ) {
             return null;
         }
@@ -45,7 +45,7 @@ public class IAdminMapperImpl implements IAdminMapper {
     }
 
     @Override
-    public Admin toUserProfile(UpdateUserRequestDto dto) {
+    public Admin toAdminProfile(UpdateAdminRequestDto dto) {
         if ( dto == null ) {
             return null;
         }
@@ -67,7 +67,7 @@ public class IAdminMapperImpl implements IAdminMapper {
     }
 
     @Override
-    public AdminSummaryResponseDto toUserProfileSummaryResponse(Admin admin) {
+    public AdminSummaryResponseDto toAdminProfileSummaryResponse(Admin admin) {
         if ( admin == null ) {
             return null;
         }

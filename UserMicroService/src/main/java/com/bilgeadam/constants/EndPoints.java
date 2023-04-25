@@ -9,10 +9,17 @@ public class EndPoints {
     public static final String DEV = "/dev";
     public static final String API = "/api";
 
-    public static final String USER = "/user";
+    public static final String ADMIN = "/admin";
+    public static final String COMPANYMANAGER = "/companymanager";
+    public static final String PERSONNEL = "/personnel";
 
     public static final String SAVE = "/save";
     public static final String UPDATE = "/update";
+    public static final String UPDATEPERSONNEL = "/updatepersonnel";
+    public static final String UPDATECOMPANYMANAGER = "/updatecompanymanager";
+    public static final String UPDATECOMPANY= "/updatecompany";
+    public static final String CREATECOMPANYMANAGER= "/createcompanymanager";
+
     public static final String DELETE = "/delete";
     public static final String GETALL = "/getall";
     public static final String GETBYID = "/getbyid";
