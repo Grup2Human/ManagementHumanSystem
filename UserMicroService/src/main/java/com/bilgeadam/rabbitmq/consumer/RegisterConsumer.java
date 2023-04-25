@@ -15,7 +15,7 @@ public class RegisterConsumer {
     @RabbitListener(queues = ("${rabbitmq.queueRegister}"))
     public void newUserCreate(RegisterModel model){
         log.info("User {}",model.toString());
-        adminService.createUser(model);
+        adminService.createAdmin(model);
         //userProfileService.createUser(IUserMapper.INSTANCE.toNewCreateUserRequestDto(model)); 2. tercih
     }
 }

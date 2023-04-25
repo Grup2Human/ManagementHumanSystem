@@ -17,9 +17,11 @@ public enum EErrorType {
     BAD_REQUEST(4200,"Parametre Hatası", HttpStatus.BAD_REQUEST),
     USERNAME_DUPLICATE(4210,"Böyle bir kullanıcı adı mevcut",HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(4211,"Böyle bie kullanıcı bulunamadı",HttpStatus.NOT_FOUND),
+
     USER_NOT_CREATED(4212,"Kullanıcı oluşturulamadı",HttpStatus.BAD_REQUEST),
     INVALID_TOKEN(4213,"Geçersiz Token",HttpStatus.BAD_REQUEST),
     FOLLOW_REQUEST_ALREADY_EXISTS(4214,"Böyle bir takip isteği daha önce oluşturulmuştur",HttpStatus.BAD_REQUEST),
+    COMPANY_NOT_FOUND(4215,"Böyle bir sirket bulunamadı",HttpStatus.NOT_FOUND),
     MUSTERI_BULUNAMADI(1003,"Aradığınız müşteri sistemde kayıtlı değildir.", INTERNAL_SERVER_ERROR),
     REGISTER_ERROR_PASSWORD_UNMATCH(1004, "Girilen parolalar uyuşmamaktadır",HttpStatus.BAD_REQUEST),
     REGISTER_ERROR_USERNAME(1005,"Bu kullanıcı adı daha önce alınmıştır",HttpStatus.BAD_REQUEST),
