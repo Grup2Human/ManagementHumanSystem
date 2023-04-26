@@ -300,7 +300,6 @@ public class AdminService extends ServiceManager<Admin,Long> {
             return adminSummaryResponseDtoList;
         }
         throw new UserManagerException(EErrorType.TUR_NOT_FOUND);
-
     }
 
 

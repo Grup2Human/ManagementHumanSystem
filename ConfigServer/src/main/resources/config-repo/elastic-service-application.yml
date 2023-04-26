@@ -1,0 +1,15 @@
+server:
+  port: 9100
+
+spring:
+  security:
+    user:
+      name: grup2
+      password: 12345
+  elasticsearch:
+    uris: http://localhost:9200
+
+jwt:
+  secret-key: ${JAVA_SECRETKEY}
+  issuer: ${JAVA6_ISSUER}
+  audience: ${JAVA6_AUDIENCE}

@@ -44,7 +44,7 @@ allprojects{
         implementation libs.springCloudConfigClient
 
         implementation libs.jwt
-        implementation libs.springCloudConfigClient
+        implementation libs.springCloudOpenFeign
 
 
     }

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-04-26T19:49:44+0300",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.6 (Amazon.com Inc.)"
+    date = "2023-04-27T01:23:37+0300",
+    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.5 (Amazon.com Inc.)"
 )
 @Component
 public class ICompanyManagerMapperImpl implements ICompanyManagerMapper {
@@ -37,6 +37,8 @@ public class ICompanyManagerMapperImpl implements ICompanyManagerMapper {
         CompanyManager.CompanyManagerBuilder<?, ?> companyManager = CompanyManager.builder();
 
         companyManager.email( model.getEmail() );
+        companyManager.authId( model.getAuthId() );
+        companyManager.status( model.getStatus() );
 
         return companyManager.build();
     }

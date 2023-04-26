@@ -7,10 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j // console a log info çıktısı vermek için kullanılan kütüphane
-public class RegisterConsumer {
+public class RegisterConsumer{
     private final AdminService adminService;
     @RabbitListener(queues = ("${rabbitmq.queueRegister}"))
     public void newUserCreate(RegisterModel model){
