@@ -15,9 +15,9 @@ import java.io.Serializable;
 @NoArgsConstructor // Parametresiz constructor tanımlar
 @AllArgsConstructor // 1....n kadar olan tüm parametreli constructorları tanımlar
 public class RegisterModel implements Serializable {
-    private Long authId;
+//    private Long authId;
     private String email;
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    EStatus Status=EStatus.ACTIVE;
+//    @Enumerated(EnumType.STRING)
+//    @Builder.Default
+//    EStatus Status=EStatus.ACTIVE;
 }

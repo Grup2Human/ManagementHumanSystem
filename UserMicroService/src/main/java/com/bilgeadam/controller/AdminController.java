@@ -55,19 +55,19 @@ public class AdminController {
     }
 
     @GetMapping(GETADMINBYID)
-    public ResponseEntity<Admin> findAdminById(String token, Long id) {
+    public ResponseEntity<Object> findAdminById(String token, Long id) {
         return ResponseEntity.ok(adminService.findAdminByIdWithToken(token,id));
     }
-    @GetMapping(GETCOMPANYBYID)
-    public ResponseEntity<Company> findCompanyById(String token, Long id) {
-        return ResponseEntity.ok(adminService.findCompanyByIdWithToken(token,id));
-    }
-    @GetMapping(GETCOMPANYMANAGERBYID)
-    public ResponseEntity<CompanyManager> findCompanyManagerById(String token, Long id) {
-        return ResponseEntity.ok(adminService.findCompanyManagerByIdWithToken(token,id));
-    }
-    @GetMapping(GETPERSONNELBYID)
-    public ResponseEntity<Personnel> findPersonnelById(String token, Long id) {
-        return ResponseEntity.ok(adminService.findPersonnelByIdWithToken(token,id));
-    }
+//    @GetMapping(GETCOMPANYBYID)
+//    public ResponseEntity<Company> findCompanyById(String token, Long id) {
+//        return ResponseEntity.ok(adminService.findCompanyByIdWithToken(token,id));
+//    }
+//    @GetMapping(GETCOMPANYMANAGERBYID)
+//    public ResponseEntity<CompanyManager> findCompanyManagerById(String token, Long id) {
+//        return ResponseEntity.ok(adminService.findCompanyManagerByIdWithToken(token,id));
+//    }
+//    @GetMapping(GETPERSONNELBYID)
+//    public ResponseEntity<Personnel> findPersonnelById(String token, Long id) {
+//        return ResponseEntity.ok(adminService.findPersonnelByIdWithToken(token,id));
+//    }
 }

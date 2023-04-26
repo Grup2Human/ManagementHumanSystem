@@ -201,14 +201,24 @@ public class AdminService extends ServiceManager<Admin,Long> {
         return true;
     }
 
-    public Admin findAdminByIdWithToken(String token, Long id) {
+    public Object findAdminByIdWithToken(String token, Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
-        Optional<Admin> userProfile = repository.findById(id);
-        if (userProfile.isEmpty())
+        Optional<Admin> adminProfile = repository.findById(id);
+        Optional<Company> companyProfile = companyRepository.findOptionalById(id);
+        Optional<CompanyManager> companyManagerProfile = companyManagerRepository.findOptionalById(id);
+        Optional<Personnel> personnelProfile = personnelRepository.findOptionalById(id);
+        if (adminProfile.isEmpty() && companyProfile.isEmpty() && companyManagerProfile.isEmpty() && personnelProfile.isEmpty())
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
-        return userProfile.get();
+        else if(adminProfile.isEmpty() && companyProfile.isEmpty() && companyManagerProfile.isEmpty())
+            return personnelProfile.get();
+        else if(adminProfile.isEmpty() && companyProfile.isEmpty() && personnelProfile.isEmpty())
+            return companyManagerProfile.get();
+        else if(adminProfile.isEmpty() && companyManagerProfile.isEmpty() && personnelProfile.isEmpty())
+            return companyProfile.get();
+        else
+            return adminProfile.get();
     }
 //    public Company findCompanyByIdWithToken(String token, Long id) {
 //        Optional<Long> authId = tokenManager.getIdFromToken(token);

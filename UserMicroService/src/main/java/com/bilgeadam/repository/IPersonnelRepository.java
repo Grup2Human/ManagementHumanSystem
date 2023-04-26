@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface IPersonnelRepository extends JpaRepository<Personnel,Long> {
 
     Optional<Personnel> findOptionalByAuthId(Long authId);
+
+    Optional<Personnel> findOptionalById(Long id);
 }
