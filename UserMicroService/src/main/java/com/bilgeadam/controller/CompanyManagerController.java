@@ -22,7 +22,7 @@ import static com.bilgeadam.constants.EndPoints.*;
 public class CompanyManagerController {
 
     private final CompanyManagerService companyManagerService;
-    @PutMapping(UPDATE)
+    @PutMapping(UPDATECOMPANYMANAGER)
     public ResponseEntity<Boolean> updateCompanyManager(@RequestBody UpdateCompanyManagerRequestDto dto) {
         return ResponseEntity.ok(companyManagerService.updateCompanyManager(dto));
     }
@@ -30,12 +30,12 @@ public class CompanyManagerController {
     public ResponseEntity<Boolean> updatePersonnel(@RequestBody UpdatePersonnelRequestDto dto) {
         return ResponseEntity.ok(companyManagerService.updatePersonnel(dto));
     }
-    @GetMapping(GETALL)
-    public ResponseEntity<List<CompanyManagerSummaryResponseDto>> findAll() {
-        return ResponseEntity.ok(companyManagerService.findAllSummary());
-    }
+//    @GetMapping(GETALL)
+//    public ResponseEntity<List<CompanyManagerSummaryResponseDto>> findAll() {
+//        return ResponseEntity.ok(companyManagerService.findAllSummary());
+//    }
 
-    @GetMapping(GETBYID)
+    @GetMapping(GETCOMPANYMANAGERBYID)
     public ResponseEntity<CompanyManager> findById(String token, Long id) {
         return ResponseEntity.ok(companyManagerService.findByIdWithToken(token,id));
     }

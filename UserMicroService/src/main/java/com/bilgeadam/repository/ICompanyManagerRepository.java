@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface ICompanyManagerRepository extends JpaRepository<CompanyManager,Long> {
 
     Optional<CompanyManager> findOptionalByAuthId(Long authId);
+
+
+    Optional<CompanyManager> findOptionalById(Long id);
 }

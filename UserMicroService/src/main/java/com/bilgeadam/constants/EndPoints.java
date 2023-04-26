@@ -14,15 +14,21 @@ public class EndPoints {
     public static final String PERSONNEL = "/personnel";
 
     public static final String SAVE = "/save";
-    public static final String UPDATE = "/update";
+    public static final String UPDATEADMIN = "/updateadmin";
     public static final String UPDATEPERSONNEL = "/updatepersonnel";
     public static final String UPDATECOMPANYMANAGER = "/updatecompanymanager";
     public static final String UPDATECOMPANY= "/updatecompany";
     public static final String CREATECOMPANYMANAGER= "/createcompanymanager";
+    public static final String CREATECOMPANY= "/createcompany";
+    public static final String CREATEPERSONNEL= "/createpersonnel";
 
     public static final String DELETE = "/delete";
+    public static final String GETALLADMIN = "/getalladmin";
     public static final String GETALL = "/getall";
-    public static final String GETBYID = "/getbyid";
+    public static final String GETADMINBYID = "/getadminbyid";
+    public static final String GETCOMPANYBYID = "/getcompanybyid";
+    public static final String GETCOMPANYMANAGERBYID = "/getcompanymanagerbyid";
+    public static final String GETPERSONNELBYID = "/getpersonnelbyid";
     public static final String GETBYAD = "/getbyad";
     public static final String REGISTER = "/register";
     public static final String LOGIN = "/login";
