@@ -7,6 +7,7 @@ import com.bilgeadam.dto.response.AuthRegisterResponseDto;
 import com.bilgeadam.exception.AuthServiceException;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.mapper.IAuthMapper;
+import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.rabbitmq.producer.ChangeStatusProducer;
 import com.bilgeadam.rabbitmq.producer.RegisterProducer;
 import com.bilgeadam.repository.IAuthRepository;
@@ -112,4 +113,14 @@ public class AuthService extends ServiceManager<Auth,Long> {
             throw new AuthServiceException(EErrorType.INVALID_TOKEN);
         return findAll();
     }
+
+//    public Boolean createAdmin(RegisterModel model) {
+//        try {
+//            Admin admin = save(IAdminMapper.INSTANCE.toAdminProfile(model));
+//            save(admin);
+//            return true;
+//        } catch (Exception e) {
+//            throw new UserManagerException(EErrorType.USER_NOT_CREATED);
+//        }
+//    }
 }

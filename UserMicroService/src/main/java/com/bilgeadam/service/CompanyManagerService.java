@@ -110,14 +110,15 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         return companyManager.get();
     }
 
-    public List<CompanyManagerSummaryResponseDto> findAllSummary() {
-        List<CompanyManager> companyManager = findAll();
-        List<CompanyManagerSummaryResponseDto> CompanyManagerSummaryResponseDtoList = new ArrayList<>();
-        companyManager.forEach(x-> {
-            CompanyManagerSummaryResponseDtoList.add(ICompanyManagerMapper.INSTANCE.toCompanyManagerProfileSummaryResponse(x));
-        });
-        return CompanyManagerSummaryResponseDtoList;
-    }
+//    public List<CompanyManagerSummaryResponseDto> findAllSummary() {
+//        List<CompanyManager> companyManager = findAll();
+//        List<CompanyManagerSummaryResponseDto> CompanyManagerSummaryResponseDtoList = new ArrayList<>();
+//        companyManager.forEach(x-> {
+//            CompanyManagerSummaryResponseDtoList
+//                    .add(ICompanyManagerMapper.INSTANCE.toCompanyManagerProfileSummaryResponse(x));
+//        });
+//        return CompanyManagerSummaryResponseDtoList;
+//    }
 
 
 

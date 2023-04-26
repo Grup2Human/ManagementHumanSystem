@@ -12,7 +12,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface IAdminMapper {
     IAdminMapper INSTANCE = Mappers.getMapper(IAdminMapper.class);
-    Admin toAdminProfile(final AdminSaveRequestDto dto);
+    Admin toAdmin(final AdminSaveRequestDto dto);
     Admin toAdminProfile(final RegisterModel model);
     Admin toAdminProfile(final UpdateAdminRequestDto dto);
     AdminSummaryResponseDto toAdminProfileSummaryResponse (final Admin admin);

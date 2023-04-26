@@ -2,6 +2,7 @@ package com.bilgeadam.mapper;
 
 import com.bilgeadam.dto.request.AdminSaveRequestDto;
 import com.bilgeadam.dto.request.CompanyManagerSaveRequestDto;
+import com.bilgeadam.dto.response.AdminSummaryResponseDto;
 import com.bilgeadam.dto.response.CompanyManagerSummaryResponseDto;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.repository.entity.Admin;
@@ -18,5 +19,5 @@ public interface ICompanyManagerMapper {
     CompanyManager toCompanyManagerProfile(final CompanyManagerSaveRequestDto dto);
     CompanyManager toCompanyManager(final RegisterModel model);
 
-    CompanyManagerSummaryResponseDto toCompanyManagerProfileSummaryResponse (final CompanyManager companyManager);
+    AdminSummaryResponseDto toCompanyManagerProfileSummaryResponse (final CompanyManager companyManager);
 }
