@@ -6,6 +6,8 @@ import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
 import com.bilgeadam.mapper.IAdminMapper;
 import com.bilgeadam.mapper.ICompanyManagerMapper;
+import com.bilgeadam.mapper.ICompanyMapper;
+import com.bilgeadam.mapper.IPersonnelMapper;
 import com.bilgeadam.rabbitmq.model.ChangeStatusModel;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.repository.IAdminRepository;
@@ -48,7 +50,7 @@ public class AdminService extends ServiceManager<Admin,Long> {
     }
 
     public Boolean saveDto(AdminSaveRequestDto dto) {
-        save(IAdminMapper.INSTANCE.toAdminProfile(dto));
+        save(IAdminMapper.INSTANCE.toAdmin(dto));
         return true;
     }
 
@@ -68,7 +70,25 @@ public class AdminService extends ServiceManager<Admin,Long> {
             companyManagerService.save(companyManager);
             return true;
         } catch (Exception e) {
-            throw new UserManagerException(EErrorType.USER_NOT_CREATED);
+            throw new UserManagerException(EErrorType.COMPANY_MANAGER_NOT_CREATED);
+        }
+    }
+    public Boolean createCompany(RegisterModel model) {
+        try {
+            Company company = companyService.save(ICompanyMapper.INSTANCE.toCompany(model));
+            companyService.save(company);
+            return true;
+        } catch (Exception e) {
+            throw new UserManagerException(EErrorType.COMPANY_NOT_CREATED);
+        }
+    }
+    public Boolean createPersonnel(RegisterModel model) {
+        try {
+            Personnel personnel = personnelService.save(IPersonnelMapper.INSTANCE.toPersonnel(model));
+            personnelService.save(personnel);
+            return true;
+        } catch (Exception e) {
+            throw new UserManagerException(EErrorType.PERSONNEL_NOT_CREATED);
         }
     }
    public void changeUserStatus(ChangeStatusModel model) {
@@ -80,12 +100,12 @@ public class AdminService extends ServiceManager<Admin,Long> {
        adminProfile.get().setStatus(model.getStatus());
        update(adminProfile.get());
    }
-    public Boolean updateAdmin(UpdateAdminRequestDto dto) {
+    public Boolean updateAdmin(UpdateAdminRequestDto dto,Long id) {
             Optional<Long> authId = tokenManager.getIdFromToken(dto.getToken());
             if (authId.isEmpty()) {
                 throw new UserManagerException(EErrorType.INVALID_TOKEN);
             }
-            Optional<Admin> adminProfile = repository.findOptionalByAuthId(authId.get());
+            Optional<Admin> adminProfile = repository.findOptionalByAuthId(id);
             if (adminProfile.isEmpty()) {
                 throw new UserManagerException(EErrorType.USER_NOT_FOUND);
             }
@@ -102,12 +122,12 @@ public class AdminService extends ServiceManager<Admin,Long> {
             update(adminProfile.get());
             return true;
         }
-    public Boolean updateCompanyManager(UpdateCompanyManagerRequestDto dto) {
+    public Boolean updateCompanyManager(UpdateCompanyManagerRequestDto dto,Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(dto.getToken());
         if (authId.isEmpty()) {
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
         }
-        Optional<CompanyManager> companyManagerProfile = companyManagerRepository.findOptionalByAuthId(authId.get());
+        Optional<CompanyManager> companyManagerProfile = companyManagerRepository.findOptionalByAuthId(id);
         if (companyManagerProfile.isEmpty()) {
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         }
@@ -128,12 +148,12 @@ public class AdminService extends ServiceManager<Admin,Long> {
         companyManagerService.update(companyManagerProfile.get());
         return true;
     }
-    public Boolean updateCompany(UpdateCompanyRequestDto dto) {
+    public Boolean updateCompany(UpdateCompanyRequestDto dto,Long id) {
         Optional<Long> companyId = tokenManager.getIdFromToken(dto.getToken());
         if (companyId.isEmpty()) {
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
         }
-        Optional<Company> companyProfile = companyRepository.findOptionalById(companyId.get());
+        Optional<Company> companyProfile = companyRepository.findOptionalById(id);
         if (companyProfile.isEmpty()) {
             throw new UserManagerException(EErrorType.COMPANY_NOT_FOUND);
         }
@@ -153,12 +173,12 @@ public class AdminService extends ServiceManager<Admin,Long> {
         companyService.update(companyProfile.get());
         return true;
     }
-    public Boolean updatePersonnel(UpdatePersonnelRequestDto dto) {
+    public Boolean updatePersonnel(UpdatePersonnelRequestDto dto,Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(dto.getToken());
         if (authId.isEmpty()) {
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
         }
-        Optional<Personnel> personnelProfile = personnelRepository.findOptionalByAuthId(authId.get());
+        Optional<Personnel> personnelProfile = personnelRepository.findOptionalByAuthId(id);
         if (personnelProfile.isEmpty()) {
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         }
@@ -181,23 +201,96 @@ public class AdminService extends ServiceManager<Admin,Long> {
         return true;
     }
 
-    public Admin findByIdWithToken(String token, Long id) {
+    public Admin findAdminByIdWithToken(String token, Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
-        Optional<Admin> userProfile = repository.findOptionalByAuthId(id);
+        Optional<Admin> userProfile = repository.findById(id);
         if (userProfile.isEmpty())
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         return userProfile.get();
     }
+//    public Company findCompanyByIdWithToken(String token, Long id) {
+//        Optional<Long> authId = tokenManager.getIdFromToken(token);
+//        if (authId.isEmpty())
+//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+//        Optional<Company> userProfile = companyRepository.findById(id);
+//        if (userProfile.isEmpty())
+//            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+//        return userProfile.get();
+//    }
+//    public CompanyManager findCompanyManagerByIdWithToken(String token, Long id) {
+//        Optional<Long> authId = tokenManager.getIdFromToken(token);
+//        if (authId.isEmpty())
+//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+//        Optional<CompanyManager> userProfile = companyManagerRepository.findById(id);
+//        if (userProfile.isEmpty())
+//            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+//        return userProfile.get();
+//    }
+//    public Personnel findPersonnelByIdWithToken(String token, Long id) {
+//        Optional<Long> authId = tokenManager.getIdFromToken(token);
+//        if (authId.isEmpty())
+//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+//        Optional<Personnel> userProfile = personnelRepository.findById(id);
+//        if (userProfile.isEmpty())
+//            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+//        return userProfile.get();
+//    }
 
-    public List<AdminSummaryResponseDto> findAllSummary() {
-        List<Admin> admins = findAll();
+
+
+    public List<AdminSummaryResponseDto> findAllSummary(String tur,String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+
+        List<Admin> adminList = findAll();
+        List<Company> companyList = companyService.findAll();
+        List<CompanyManager> companyManagerList = companyManagerService.findAll();
+        List<Personnel> personnelList = personnelService.findAll();
         List<AdminSummaryResponseDto> adminSummaryResponseDtoList = new ArrayList<>();
-        admins.forEach(x-> {
-            adminSummaryResponseDtoList.add(IAdminMapper.INSTANCE.toAdminProfileSummaryResponse(x));
-        });
-        return adminSummaryResponseDtoList;
+        if(tur.equals("hepsi")) {
+
+            adminList.forEach(x -> {
+                adminSummaryResponseDtoList.add(IAdminMapper.INSTANCE.toAdminProfileSummaryResponse(x));
+            });
+            companyList.forEach(x -> {
+                adminSummaryResponseDtoList.add(ICompanyMapper.INSTANCE.toCompanyProfileSummaryResponse(x));
+            });
+            companyManagerList.forEach(x -> {
+                adminSummaryResponseDtoList.add(ICompanyManagerMapper.INSTANCE.toCompanyManagerProfileSummaryResponse(x));
+            });
+            personnelList.forEach(x -> {
+                adminSummaryResponseDtoList.add(IPersonnelMapper.INSTANCE.toPersonnelProfileSummaryResponse(x));
+            });
+            return adminSummaryResponseDtoList;
+        }else if(tur.equals("admin")){
+            adminList.forEach(x -> {
+                adminSummaryResponseDtoList.add(IAdminMapper.INSTANCE.toAdminProfileSummaryResponse(x));
+            });
+            return adminSummaryResponseDtoList;
+        }
+        else if(tur.equals("company")){
+            companyList.forEach(x -> {
+                adminSummaryResponseDtoList.add(ICompanyMapper.INSTANCE.toCompanyProfileSummaryResponse(x));
+            });
+            return adminSummaryResponseDtoList;
+        }
+        else if(tur.equals("personnel")){
+            personnelList.forEach(x -> {
+                adminSummaryResponseDtoList.add(IPersonnelMapper.INSTANCE.toPersonnelProfileSummaryResponse(x));
+            });
+            return adminSummaryResponseDtoList;
+        }
+        else if(tur.equals("companymanager")){
+            companyManagerList.forEach(x -> {
+                adminSummaryResponseDtoList.add(ICompanyManagerMapper.INSTANCE.toCompanyManagerProfileSummaryResponse(x));
+            });
+            return adminSummaryResponseDtoList;
+        }
+        throw new UserManagerException(EErrorType.TUR_NOT_FOUND);
+
     }
 
 
