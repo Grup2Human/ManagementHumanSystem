@@ -2,6 +2,9 @@ package com.bilgeadam.service;
 
 import com.bilgeadam.dto.request.*;
 import com.bilgeadam.dto.response.AdminSummaryResponseDto;
+import com.bilgeadam.dto.response.CompanyManagerSummaryResponseDto;
+import com.bilgeadam.dto.response.CompanySummaryResponseDto;
+import com.bilgeadam.dto.response.PersonnelSummaryResponseDto;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
 import com.bilgeadam.manager.IElasticServiceAdminManager;
@@ -10,7 +13,9 @@ import com.bilgeadam.mapper.ICompanyManagerMapper;
 import com.bilgeadam.mapper.ICompanyMapper;
 import com.bilgeadam.mapper.IPersonnelMapper;
 import com.bilgeadam.rabbitmq.model.ChangeStatusModel;
+import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
+import com.bilgeadam.rabbitmq.producer.CreatePersonProducer;
 import com.bilgeadam.repository.IAdminRepository;
 import com.bilgeadam.repository.ICompanyManagerRepository;
 import com.bilgeadam.repository.ICompanyRepository;
@@ -38,8 +43,9 @@ public class AdminService extends ServiceManager<Admin,Long> {
     private final CompanyService companyService;
     private final PersonnelService personnelService;
     private final IElasticServiceAdminManager elasticServiceAdminManager;
+    private final CreatePersonProducer createPersonProducer;
 
-    public AdminService(IAdminRepository repository, ICompanyRepository companyRepository, ICompanyManagerRepository companyManagerRepository, IPersonnelRepository personnelRepository, JwtTokenManager tokenManager, CompanyManagerService companyManagerService, CompanyService companyService, PersonnelService personnelService, IElasticServiceAdminManager elasticServiceAdminManager) {
+    public AdminService(IAdminRepository repository, ICompanyRepository companyRepository, ICompanyManagerRepository companyManagerRepository, IPersonnelRepository personnelRepository, JwtTokenManager tokenManager, CompanyManagerService companyManagerService, CompanyService companyService, PersonnelService personnelService, IElasticServiceAdminManager elasticServiceAdminManager, CreatePersonProducer createPersonProducer) {
         super(repository);
         this.repository = repository;
         this.companyRepository = companyRepository;
@@ -50,6 +56,7 @@ public class AdminService extends ServiceManager<Admin,Long> {
         this.companyService = companyService;
         this.personnelService = personnelService;
         this.elasticServiceAdminManager = elasticServiceAdminManager;
+        this.createPersonProducer = createPersonProducer;
     }
 
     public Boolean saveDto(AdminSaveRequestDto dto) {
@@ -72,28 +79,31 @@ public class AdminService extends ServiceManager<Admin,Long> {
         return true;
     }
 
-    public Boolean createCompanyManager(RegisterModel model) {
+    public Boolean createCompanyManager(CreatePersonModel model) {
+
         try {
             CompanyManager companyManager = companyManagerService.save(ICompanyManagerMapper.INSTANCE.toCompanyManager(model));
             companyManagerService.save(companyManager);
+            createPersonProducer.sendNewPerson(model);
             return true;
         } catch (Exception e) {
             throw new UserManagerException(EErrorType.COMPANY_MANAGER_NOT_CREATED);
         }
     }
-    public Boolean createCompany(RegisterModel model) {
+    public Boolean createCompany(CompanySaveRequestDto dto) {
         try {
-            Company company = companyService.save(ICompanyMapper.INSTANCE.toCompany(model));
+            Company company = companyService.save(ICompanyMapper.INSTANCE.toCompany(dto));
             companyService.save(company);
             return true;
         } catch (Exception e) {
             throw new UserManagerException(EErrorType.COMPANY_NOT_CREATED);
         }
     }
-    public Boolean createPersonnel(RegisterModel model) {
+    public Boolean createPersonnel(CreatePersonModel model) {
         try {
             Personnel personnel = personnelService.save(IPersonnelMapper.INSTANCE.toPersonnel(model));
             personnelService.save(personnel);
+            createPersonProducer.sendNewPerson(model);
             return true;
         } catch (Exception e) {
             throw new UserManagerException(EErrorType.PERSONNEL_NOT_CREATED);
@@ -108,7 +118,7 @@ public class AdminService extends ServiceManager<Admin,Long> {
        adminProfile.get().setStatus(model.getStatus());
        update(adminProfile.get());
    }
-    public Boolean updateAdmin(UpdateAdminRequestDto dto,Long id) {
+    public Boolean updateAdmin(UpdateAdminRequestDto dto, Long id) {
             Optional<Long> authId = tokenManager.getIdFromToken(dto.getToken());
             if (authId.isEmpty()) {
                 throw new UserManagerException(EErrorType.INVALID_TOKEN);
@@ -130,12 +140,12 @@ public class AdminService extends ServiceManager<Admin,Long> {
             update(adminProfile.get());
             return true;
         }
-    public Boolean updateCompanyManager(UpdateCompanyManagerRequestDto dto,Long id) {
+    public Boolean updateCompanyManager(UpdateCompanyManagerRequestDto dto, Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(dto.getToken());
         if (authId.isEmpty()) {
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
         }
-        Optional<CompanyManager> companyManagerProfile = companyManagerRepository.findOptionalByAuthId(id);
+        Optional<CompanyManager> companyManagerProfile = companyManagerRepository.findById(id);
         if (companyManagerProfile.isEmpty()) {
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         }
@@ -156,7 +166,7 @@ public class AdminService extends ServiceManager<Admin,Long> {
         companyManagerService.update(companyManagerProfile.get());
         return true;
     }
-    public Boolean updateCompany(UpdateCompanyRequestDto dto,Long id) {
+    public Boolean updateCompany(UpdateCompanyRequestDto dto, Long id) {
         Optional<Long> companyId = tokenManager.getIdFromToken(dto.getToken());
         if (companyId.isEmpty()) {
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
@@ -181,12 +191,12 @@ public class AdminService extends ServiceManager<Admin,Long> {
         companyService.update(companyProfile.get());
         return true;
     }
-    public Boolean updatePersonnel(UpdatePersonnelRequestDto dto,Long id) {
+    public Boolean updatePersonnel(UpdatePersonnelRequestDto dto, Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(dto.getToken());
         if (authId.isEmpty()) {
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
         }
-        Optional<Personnel> personnelProfile = personnelRepository.findOptionalByAuthId(id);
+        Optional<Personnel> personnelProfile = personnelRepository.findById(id);
         if (personnelProfile.isEmpty()) {
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         }
@@ -209,106 +219,165 @@ public class AdminService extends ServiceManager<Admin,Long> {
         return true;
     }
 
-    public Object findAdminByIdWithToken(String token, Long id) {
+//    public Object findAdminByIdWithToken(String token, Long id) {
+//        Optional<Long> authId = tokenManager.getIdFromToken(token);
+//        if (authId.isEmpty())
+//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+//        Optional<Admin> adminProfile = repository.findById(id);
+//        Optional<Company> companyProfile = companyRepository.findOptionalById(id);
+//        Optional<CompanyManager> companyManagerProfile = companyManagerRepository.findOptionalById(id);
+//        Optional<Personnel> personnelProfile = personnelRepository.findOptionalById(id);
+//        if (adminProfile.isEmpty() && companyProfile.isEmpty() && companyManagerProfile.isEmpty() && personnelProfile.isEmpty())
+//            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+//        else if(adminProfile.isEmpty() && companyProfile.isEmpty() && companyManagerProfile.isEmpty())
+//            return personnelProfile.get();
+//        else if(adminProfile.isEmpty() && companyProfile.isEmpty() && personnelProfile.isEmpty())
+//            return companyManagerProfile.get();
+//        else if(adminProfile.isEmpty() && companyManagerProfile.isEmpty() && personnelProfile.isEmpty())
+//            return companyProfile.get();
+//        else
+//            return adminProfile.get();
+//    }
+
+    public Admin findAdminByIdWithToken(String token, Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
-        Optional<Admin> adminProfile = repository.findById(id);
-        Optional<Company> companyProfile = companyRepository.findOptionalById(id);
-        Optional<CompanyManager> companyManagerProfile = companyManagerRepository.findOptionalById(id);
-        Optional<Personnel> personnelProfile = personnelRepository.findOptionalById(id);
-        if (adminProfile.isEmpty() && companyProfile.isEmpty() && companyManagerProfile.isEmpty() && personnelProfile.isEmpty())
+        Optional<Admin> userProfile = repository.findById(id);
+        if (userProfile.isEmpty())
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
-        else if(adminProfile.isEmpty() && companyProfile.isEmpty() && companyManagerProfile.isEmpty())
-            return personnelProfile.get();
-        else if(adminProfile.isEmpty() && companyProfile.isEmpty() && personnelProfile.isEmpty())
-            return companyManagerProfile.get();
-        else if(adminProfile.isEmpty() && companyManagerProfile.isEmpty() && personnelProfile.isEmpty())
-            return companyProfile.get();
-        else
-            return adminProfile.get();
+        return userProfile.get();
     }
-//    public Company findCompanyByIdWithToken(String token, Long id) {
-//        Optional<Long> authId = tokenManager.getIdFromToken(token);
-//        if (authId.isEmpty())
-//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
-//        Optional<Company> userProfile = companyRepository.findById(id);
-//        if (userProfile.isEmpty())
-//            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
-//        return userProfile.get();
-//    }
-//    public CompanyManager findCompanyManagerByIdWithToken(String token, Long id) {
-//        Optional<Long> authId = tokenManager.getIdFromToken(token);
-//        if (authId.isEmpty())
-//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
-//        Optional<CompanyManager> userProfile = companyManagerRepository.findById(id);
-//        if (userProfile.isEmpty())
-//            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
-//        return userProfile.get();
-//    }
-//    public Personnel findPersonnelByIdWithToken(String token, Long id) {
-//        Optional<Long> authId = tokenManager.getIdFromToken(token);
-//        if (authId.isEmpty())
-//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
-//        Optional<Personnel> userProfile = personnelRepository.findById(id);
-//        if (userProfile.isEmpty())
-//            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
-//        return userProfile.get();
-//    }
-
-
-
-    public List<AdminSummaryResponseDto> findAllSummary(String tur,String token) {
+    public Company findCompanyByIdWithToken(String token, Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
-
-        List<Admin> adminList = findAll();
-        List<Company> companyList = companyService.findAll();
-        List<CompanyManager> companyManagerList = companyManagerService.findAll();
-        List<Personnel> personnelList = personnelService.findAll();
-        List<AdminSummaryResponseDto> adminSummaryResponseDtoList = new ArrayList<>();
-        if(tur.equals("hepsi")) {
-
-            adminList.forEach(x -> {
-                adminSummaryResponseDtoList.add(IAdminMapper.INSTANCE.toAdminProfileSummaryResponse(x));
-            });
-            companyList.forEach(x -> {
-                adminSummaryResponseDtoList.add(ICompanyMapper.INSTANCE.toCompanyProfileSummaryResponse(x));
-            });
-            companyManagerList.forEach(x -> {
-                adminSummaryResponseDtoList.add(ICompanyManagerMapper.INSTANCE.toCompanyManagerProfileSummaryResponse(x));
-            });
-            personnelList.forEach(x -> {
-                adminSummaryResponseDtoList.add(IPersonnelMapper.INSTANCE.toPersonnelProfileSummaryResponse(x));
-            });
-            return adminSummaryResponseDtoList;
-        }else if(tur.equals("admin")){
-            adminList.forEach(x -> {
-                adminSummaryResponseDtoList.add(IAdminMapper.INSTANCE.toAdminProfileSummaryResponse(x));
-            });
-            return adminSummaryResponseDtoList;
-        }
-        else if(tur.equals("company")){
-            companyList.forEach(x -> {
-                adminSummaryResponseDtoList.add(ICompanyMapper.INSTANCE.toCompanyProfileSummaryResponse(x));
-            });
-            return adminSummaryResponseDtoList;
-        }
-        else if(tur.equals("personnel")){
-            personnelList.forEach(x -> {
-                adminSummaryResponseDtoList.add(IPersonnelMapper.INSTANCE.toPersonnelProfileSummaryResponse(x));
-            });
-            return adminSummaryResponseDtoList;
-        }
-        else if(tur.equals("companymanager")){
-            companyManagerList.forEach(x -> {
-                adminSummaryResponseDtoList.add(ICompanyManagerMapper.INSTANCE.toCompanyManagerProfileSummaryResponse(x));
-            });
-            return adminSummaryResponseDtoList;
-        }
-        throw new UserManagerException(EErrorType.TUR_NOT_FOUND);
+        Optional<Company> userProfile = companyRepository.findById(id);
+        if (userProfile.isEmpty())
+            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+        return userProfile.get();
     }
+    public CompanyManager findCompanyManagerByIdWithToken(String token, Long id) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        Optional<CompanyManager> userProfile = companyManagerRepository.findById(id);
+        if (userProfile.isEmpty())
+            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+        return userProfile.get();
+    }
+    public Personnel findPersonnelByIdWithToken(String token, Long id) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        Optional<Personnel> userProfile = personnelRepository.findById(id);
+        if (userProfile.isEmpty())
+            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+        return userProfile.get();
+    }
+
+    public List<AdminSummaryResponseDto> findAllSummaryAdmin(String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        List<Admin> adminList = findAll();
+        List<AdminSummaryResponseDto> adminSummaryResponseDtoList = new ArrayList<>();
+        adminList.forEach(x -> {
+                adminSummaryResponseDtoList.add(IAdminMapper.INSTANCE.toAdminProfileSummaryResponse(x));
+            });
+        return adminSummaryResponseDtoList;
+    }
+    public List<CompanySummaryResponseDto> findAllSummaryCompany(String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        List<Company> companyList = companyService.findAll();
+        List<CompanySummaryResponseDto> companySummaryResponseDtoList = new ArrayList<>();
+        companyList.forEach(x -> {
+            companySummaryResponseDtoList.add(ICompanyMapper.INSTANCE.toCompanyProfileSummaryResponse(x));
+        });
+        return companySummaryResponseDtoList;
+    }
+
+    public List<PersonnelSummaryResponseDto> findAllSummaryPersonnel(String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        List<Personnel> adminList = personnelService.findAll();
+        List<PersonnelSummaryResponseDto> personnelSummaryResponseDtoList = new ArrayList<>();
+        adminList.forEach(x -> {
+            personnelSummaryResponseDtoList.add(IPersonnelMapper.INSTANCE.toPersonnelProfileSummaryResponse(x));
+        });
+        return personnelSummaryResponseDtoList;
+    }
+
+    public List<CompanyManagerSummaryResponseDto> findAllSummaryCompanyManager(String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        List<CompanyManager> companyManagerList = companyManagerService.findAll();
+        List<CompanyManagerSummaryResponseDto> companyManagerSummaryResponseDtoList = new ArrayList<>();
+        companyManagerList.forEach(x -> {
+            companyManagerSummaryResponseDtoList.add(ICompanyManagerMapper.INSTANCE.toCompanyManagerProfileSummaryResponse(x));
+        });
+        return companyManagerSummaryResponseDtoList;
+    }
+
+//    public List<AdminSummaryResponseDto> findAllSummary(String tur,String token) {
+//        Optional<Long> authId = tokenManager.getIdFromToken(token);
+//        if (authId.isEmpty())
+//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+//
+//        List<Admin> adminList = findAll();
+//        List<Company> companyList = companyService.findAll();
+//        List<CompanyManager> companyManagerList = companyManagerService.findAll();
+//        List<Personnel> personnelList = personnelService.findAll();
+//        List<AdminSummaryResponseDto> adminSummaryResponseDtoList = new ArrayList<>();
+//        List<CompanySummaryResponseDto> companySummaryResponseDtoList = new ArrayList<>();
+//        List<CompanyManagerSummaryResponseDto> companyManagerSummaryResponseDtoList = new ArrayList<>();
+//        List<PersonnelSummaryResponseDto> personnelSummaryResponseDtoList = new ArrayList<>();
+////        if(tur.equals("hepsi")) {
+////
+////            adminList.forEach(x -> {
+////                adminSummaryResponseDtoList.add(IAdminMapper.INSTANCE.toAdminProfileSummaryResponse(x));
+////            });
+////            companyList.forEach(x -> {
+////                adminSummaryResponseDtoList.add(ICompanyMapper.INSTANCE.toCompanyProfileSummaryResponse(x));
+////            });
+////            companyManagerList.forEach(x -> {
+////                adminSummaryResponseDtoList.add(ICompanyManagerMapper.INSTANCE.toCompanyManagerProfileSummaryResponse(x));
+////            });
+////            personnelList.forEach(x -> {
+////                adminSummaryResponseDtoList.add(IPersonnelMapper.INSTANCE.toPersonnelProfileSummaryResponse(x));
+////            });
+////            return adminSummaryResponseDtoList;
+////        }
+//        if(tur.equals("admin")){
+//            adminList.forEach(x -> {
+//                adminSummaryResponseDtoList.add(IAdminMapper.INSTANCE.toAdminProfileSummaryResponse(x));
+//            });
+//            return adminSummaryResponseDtoList;
+//        }
+//        else if(tur.equals("company")){
+//            companyList.forEach(x -> {
+//                companySummaryResponseDtoList.add(ICompanyMapper.INSTANCE.toCompanyProfileSummaryResponse(x));
+//            });
+//            return adminSummaryResponseDtoList;
+//        }
+//        else if(tur.equals("personnel")){
+//            personnelList.forEach(x -> {
+//                personnelSummaryResponseDtoList.add(IPersonnelMapper.INSTANCE.toPersonnelProfileSummaryResponse(x));
+//            });
+//            return adminSummaryResponseDtoList;
+//        }
+//        else if(tur.equals("companymanager")){
+//            companyManagerList.forEach(x -> {
+//                companyManagerSummaryResponseDtoList.add(ICompanyManagerMapper.INSTANCE.toCompanyManagerProfileSummaryResponse(x));
+//            });
+//            return adminSummaryResponseDtoList;
+//        }
+//        throw new UserManagerException(EErrorType.TUR_NOT_FOUND);
+//    }
 
 
 

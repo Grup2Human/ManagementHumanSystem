@@ -1,22 +1,14 @@
 package com.bilgeadam.service;
 
-import com.bilgeadam.dto.request.UpdateCompanyManagerRequestDto;
 import com.bilgeadam.dto.request.UpdatePersonnelRequestDto;
-import com.bilgeadam.dto.response.CompanyManagerSummaryResponseDto;
-import com.bilgeadam.dto.response.PersonnelSummaryResponseDto;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
-import com.bilgeadam.mapper.ICompanyManagerMapper;
-import com.bilgeadam.mapper.IPersonnelMapper;
 import com.bilgeadam.repository.IPersonnelRepository;
-import com.bilgeadam.repository.entity.CompanyManager;
 import com.bilgeadam.repository.entity.Personnel;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service

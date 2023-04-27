@@ -20,6 +20,7 @@ public enum EErrorType {
     INVALID_TOKEN(1007,"Geçersiz Token",BAD_REQUEST),
     NOT_ACTIVE_ACCOUNT(1008,"Hesabınız şu anda aktif değildir", BAD_REQUEST),
     LOGIN_ERROR_ADMIN(1009,"Admin girisi gereklidir !",BAD_REQUEST),
+    CREATE_ERROR(1010, "Kullanici olusturulamadi",BAD_REQUEST),
     METHOD_MIS_MATCH_ERROR(2002,"Giriş yaptığınız değer, istenilen değerle uyuşmamaktadır",BAD_REQUEST),
     METHOD_NOT_VALID_ARGUMENT_ERROR(2003,"URL içinde eksik parametre gönderimi",BAD_REQUEST),
     INVALID_PARAMETER(3001,"Geçersiz parametre girişi yaptınız", BAD_REQUEST),

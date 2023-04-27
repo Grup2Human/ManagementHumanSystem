@@ -41,4 +41,16 @@ public class RabbitConfig {
         return BindingBuilder.bind(changeStatusQueue).to(exchangeAuth).with(changeStatusBindingKey);
     }
 
+    /**
+     * User kayıt olan person
+     */
+    @Value("${rabbitmq.queuecreateperson}")
+    private String queueCreatePerson;  // (kuyruk ismi) bu kuyruga baglayacagiz
+
+    /**  mail için queue oluşturalım:  */
+    @Bean
+    Queue createPersonQueue(){
+        return new Queue(queueCreatePerson);
+    }
+
 }

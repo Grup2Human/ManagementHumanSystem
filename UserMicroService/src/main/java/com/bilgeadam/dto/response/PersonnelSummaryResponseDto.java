@@ -14,6 +14,6 @@ public class PersonnelSummaryResponseDto {
     private String name;
     private String surname;
     private String email;
-    private String photo;
-    private String address;
+    private String phone;
+    private Long companyId;
 }

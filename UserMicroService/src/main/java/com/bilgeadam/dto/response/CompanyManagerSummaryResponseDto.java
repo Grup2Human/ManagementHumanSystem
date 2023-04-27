@@ -15,5 +15,5 @@ public class CompanyManagerSummaryResponseDto {
     private String surname;
     private String email;
     private String photo;
-    private String address;
+    private Long companyId;
 }

@@ -24,7 +24,10 @@ public class EndPoints {
 
     public static final String DELETE = "/delete";
     public static final String GETALLADMIN = "/getalladmin";
-    public static final String GETALL = "/getall";
+    public static final String GETALLCOMPANY = "/getallcompany";
+    public static final String GETALLCOMPANYMANAGER = "/getallcompanymanager";
+    public static final String GETALLPERSONNEL = "/getallpersonnel";
+
     public static final String GETADMINBYID = "/getadminbyid";
     public static final String GETCOMPANYBYID = "/getcompanybyid";
     public static final String GETCOMPANYMANAGERBYID = "/getcompanymanagerbyid";
