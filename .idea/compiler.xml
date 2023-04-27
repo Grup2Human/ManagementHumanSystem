@@ -11,6 +11,7 @@
         <module name="ManagementSystemHumanResources.AuthMicroService.main" />
         <module name="ManagementSystemHumanResources.ElasticMicroService.main" />
         <module name="ManagementSystemHumanResources.ConfigServerGit.main" />
+        <module name="ManagementSystemHumanResources.MailService.main" />
         <module name="ManagementSystemHumanResources.UserMicroService.main" />
         <module name="ManagementSystemHumanResources.main" />
         <module name="ManagementSystemHumanResources.ConfigServer.main" />

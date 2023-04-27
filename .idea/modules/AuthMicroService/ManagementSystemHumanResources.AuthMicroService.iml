@@ -6,10 +6,6 @@
       <excludeFolder url="file://$MODULE_DIR$/../../../AuthMicroService/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../../AuthMicroService/build" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../AuthMicroService">
-      <excludeFolder url="file://$MODULE_DIR$/../../../AuthMicroService/.gradle" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../AuthMicroService/build" />
-    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

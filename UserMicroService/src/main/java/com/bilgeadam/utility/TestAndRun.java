@@ -22,7 +22,7 @@ public class TestAndRun {
          * çalışması sistemi etkilemeyen durumlarda thread içinde çalıştırmak doğru olacaktır.
          */
 
-            runAdmin();
+ //           runAdmin();
 //        new Thread(()->{
 //            runAdmin();
 //        });

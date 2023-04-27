@@ -28,11 +28,18 @@ public class RabbitConfig {
     @Value("${rabbitmq.exchange-user}")
     private String exchange;  // bu exchange uzerinden...
 
-    // mail için kuyruk parametreleri oluşturuyoruz:
+    // person ekleme için kuyruk parametreleri oluşturuyoruz:
     @Value("${rabbitmq.createpersonkey}")
     private String createPersonBindingKey; // bu key'i kullanarak
     @Value("${rabbitmq.queuecreateperson}")
     private String queueCreatePerson;  // (kuyruk ismi) bu kuyruga baglayacagiz
+
+
+    // mail için kuyruk parametreleri oluşturuyoruz:
+    @Value("${rabbitmq.passwordmailkey}")
+    private String passwordMailBindingKey; // bu key'i kullanarak
+    @Value("${rabbitmq.queuepasswordmail}")
+    private String queuePasswordMail;  // (kuyruk ismi) bu kuyruga baglayacagiz
 
 
     /**  Exchange oluşturalım:  */
@@ -41,15 +48,28 @@ public class RabbitConfig {
         return new DirectExchange(exchange);
     }
 
-    /**  mail için queue oluşturalım:  */
+    /**  person ekleme için queue oluşturalım:  */
     @Bean
     Queue createPersonQueue(){
         return new Queue(queueCreatePerson);
     }
 
-    /**  mail kuyrugu icin binding olusturalım:  */
+    /**  person ekleme kuyrugu icin binding olusturalım:  */
     @Bean
     public Binding bindingCreatePerson(final Queue createPersonQueue, final DirectExchange exchangePerson){
         return BindingBuilder.bind(createPersonQueue).to(exchangePerson).with(createPersonBindingKey);
+    }
+
+
+    /**  mail için queue oluşturalım:  */
+    @Bean
+    Queue passwordMailQueue(){
+        return new Queue(queuePasswordMail);
+    }
+
+    /**  mail kuyrugu icin binding olusturalım:  */
+    @Bean
+    public Binding bindingPasswordMail(final Queue passwordMailQueue, final DirectExchange exchangeMail){
+        return BindingBuilder.bind(passwordMailQueue).to(exchangeMail).with(passwordMailBindingKey);
     }
 }

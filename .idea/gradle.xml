@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/ConfigServer" />
             <option value="$PROJECT_DIR$/ConfigServerGit" />
             <option value="$PROJECT_DIR$/ElasticMicroService" />
+            <option value="$PROJECT_DIR$/MailService" />
             <option value="$PROJECT_DIR$/UserMicroService" />
           </set>
         </option>

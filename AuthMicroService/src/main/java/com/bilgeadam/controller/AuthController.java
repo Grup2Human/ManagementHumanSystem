@@ -49,7 +49,7 @@ public class AuthController {
 
     @GetMapping("/message")
     public ResponseEntity<String> getMessage() {
-        return ResponseEntity.ok("Genel bir mesajjj git pushladik yine");
+        return ResponseEntity.ok("Genell birr mesajjj git pushladik yine");
     }
 
 }
