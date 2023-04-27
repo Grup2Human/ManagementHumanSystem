@@ -21,9 +21,8 @@ public class TestAndRun {
          * bu kodu yorum satırına almak doğru olacaktır.
          * çalışması sistemi etkilemeyen durumlarda thread içinde çalıştırmak doğru olacaktır.
          */
-        new Thread(()->{
+
             runAdmin();
-        });
 //        new Thread(()->{
 //            runAdmin();
 //        });

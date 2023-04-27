@@ -10,4 +10,16 @@ import lombok.*;
 public class AddAdminRequestDto {
     private Long id;
     private Long authId;
+    private String name;
+    private String nameSecond;
+    private String surname;
+    private String surnameSecond;
+    private String photo;
+    private String email;
+    private String birthday;
+    private String birthPlace;
+    private Long TC;
+    private String address;
+    private String phoneNumber;
+    private EStatus status;
 }

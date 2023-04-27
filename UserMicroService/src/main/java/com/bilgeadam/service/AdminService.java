@@ -4,6 +4,7 @@ import com.bilgeadam.dto.request.*;
 import com.bilgeadam.dto.response.AdminSummaryResponseDto;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
+import com.bilgeadam.manager.IElasticServiceAdminManager;
 import com.bilgeadam.mapper.IAdminMapper;
 import com.bilgeadam.mapper.ICompanyManagerMapper;
 import com.bilgeadam.mapper.ICompanyMapper;
@@ -36,8 +37,9 @@ public class AdminService extends ServiceManager<Admin,Long> {
     private final CompanyManagerService companyManagerService;
     private final CompanyService companyService;
     private final PersonnelService personnelService;
+    private final IElasticServiceAdminManager elasticServiceAdminManager;
 
-    public AdminService(IAdminRepository repository, ICompanyRepository companyRepository, ICompanyManagerRepository companyManagerRepository, IPersonnelRepository personnelRepository, JwtTokenManager tokenManager, CompanyManagerService companyManagerService, CompanyService companyService, PersonnelService personnelService) {
+    public AdminService(IAdminRepository repository, ICompanyRepository companyRepository, ICompanyManagerRepository companyManagerRepository, IPersonnelRepository personnelRepository, JwtTokenManager tokenManager, CompanyManagerService companyManagerService, CompanyService companyService, PersonnelService personnelService, IElasticServiceAdminManager elasticServiceAdminManager) {
         super(repository);
         this.repository = repository;
         this.companyRepository = companyRepository;
@@ -47,6 +49,7 @@ public class AdminService extends ServiceManager<Admin,Long> {
         this.companyManagerService = companyManagerService;
         this.companyService = companyService;
         this.personnelService = personnelService;
+        this.elasticServiceAdminManager = elasticServiceAdminManager;
     }
 
     public Boolean saveDto(AdminSaveRequestDto dto) {
@@ -56,12 +59,17 @@ public class AdminService extends ServiceManager<Admin,Long> {
 
     public Boolean createAdmin(RegisterModel model) {
         try {
-            Admin admin = save(IAdminMapper.INSTANCE.toAdminProfile(model));
+            Admin admin = IAdminMapper.INSTANCE.toAdminProfile(model);
             save(admin);
-            return true;
+            try {
+                elasticServiceAdminManager.addAdmin(admin);
+            } catch (Exception e) {
+                throw new UserManagerException(EErrorType.USER_NOT_CREATED);
+            }
         } catch (Exception e) {
-            throw new UserManagerException(EErrorType.USER_NOT_CREATED);
+
         }
+        return true;
     }
 
     public Boolean createCompanyManager(RegisterModel model) {
