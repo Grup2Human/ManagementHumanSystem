@@ -1,8 +1,6 @@
 package com.bilgeadam.controller;
 
-import com.bilgeadam.dto.request.UpdateCompanyManagerRequestDto;
-import com.bilgeadam.dto.request.UpdateCompanyRequestDto;
-import com.bilgeadam.dto.request.UpdatePersonnelRequestDto;
+import com.bilgeadam.dto.request.*;
 import com.bilgeadam.dto.response.CompanyManagerSummaryResponseDto;
 import com.bilgeadam.dto.response.PersonnelSummaryResponseDto;
 import com.bilgeadam.rabbitmq.model.CreatePersonModel;
@@ -60,11 +58,12 @@ public class CompanyManagerController {
     }
 
     @PutMapping(CREATECOMPANYMANAGER)
-    public ResponseEntity<Boolean> createCompanyManager(@RequestBody CreatePersonModel model) {
-        return ResponseEntity.ok(companyManagerService.createCompanyManager(model));
+    public ResponseEntity<Boolean> createCompanyManager(@RequestBody CompanyManagerSaveRequestDto dto) {
+        return ResponseEntity.ok(companyManagerService.createCompanyManager(dto));
     }
+
     @PutMapping(CREATEPERSONNEL)
-    public ResponseEntity<Boolean> createPersonnel(@RequestBody CreatePersonModel model) {
-        return ResponseEntity.ok(companyManagerService.createPersonnel(model));
+    public ResponseEntity<Boolean> createPersonnel(@RequestBody PersonnelSaveRequestDto dto) {
+        return ResponseEntity.ok(companyManagerService.createPersonnel(dto));
     }
 }
