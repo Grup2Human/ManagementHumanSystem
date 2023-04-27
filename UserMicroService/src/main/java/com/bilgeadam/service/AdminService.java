@@ -16,6 +16,7 @@ import com.bilgeadam.rabbitmq.model.ChangeStatusModel;
 import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.rabbitmq.producer.CreatePersonProducer;
+import com.bilgeadam.rabbitmq.producer.PasswordMailProducer;
 import com.bilgeadam.repository.IAdminRepository;
 import com.bilgeadam.repository.ICompanyManagerRepository;
 import com.bilgeadam.repository.ICompanyRepository;
@@ -24,9 +25,11 @@ import com.bilgeadam.repository.entity.Admin;
 import com.bilgeadam.repository.entity.Company;
 import com.bilgeadam.repository.entity.CompanyManager;
 import com.bilgeadam.repository.entity.Personnel;
+import com.bilgeadam.utility.CodeGenerator;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
 import org.springframework.stereotype.Service;
+import com.bilgeadam.utility.CodeGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +47,9 @@ public class AdminService extends ServiceManager<Admin,Long> {
     private final PersonnelService personnelService;
     private final IElasticServiceAdminManager elasticServiceAdminManager;
     private final CreatePersonProducer createPersonProducer;
+    private final PasswordMailProducer passwordMailProducer;
 
-    public AdminService(IAdminRepository repository, ICompanyRepository companyRepository, ICompanyManagerRepository companyManagerRepository, IPersonnelRepository personnelRepository, JwtTokenManager tokenManager, CompanyManagerService companyManagerService, CompanyService companyService, PersonnelService personnelService, IElasticServiceAdminManager elasticServiceAdminManager, CreatePersonProducer createPersonProducer) {
+    public AdminService(IAdminRepository repository, ICompanyRepository companyRepository, ICompanyManagerRepository companyManagerRepository, IPersonnelRepository personnelRepository, JwtTokenManager tokenManager, CompanyManagerService companyManagerService, CompanyService companyService, PersonnelService personnelService, IElasticServiceAdminManager elasticServiceAdminManager, CreatePersonProducer createPersonProducer, PasswordMailProducer passwordMailProducer) {
         super(repository);
         this.repository = repository;
         this.companyRepository = companyRepository;
@@ -57,6 +61,8 @@ public class AdminService extends ServiceManager<Admin,Long> {
         this.personnelService = personnelService;
         this.elasticServiceAdminManager = elasticServiceAdminManager;
         this.createPersonProducer = createPersonProducer;
+        this.passwordMailProducer = passwordMailProducer;
+
     }
 
     public Boolean saveDto(AdminSaveRequestDto dto) {
@@ -79,11 +85,18 @@ public class AdminService extends ServiceManager<Admin,Long> {
         return true;
     }
 
-    public Boolean createCompanyManager(CreatePersonModel model) {
+    public Boolean createCompanyManager(CompanyManagerSaveRequestDto dto) {
 
         try {
-            CompanyManager companyManager = companyManagerService.save(ICompanyManagerMapper.INSTANCE.toCompanyManager(model));
+            CreatePersonModel model = CreatePersonModel.builder()
+                    .email(dto.getEmail())
+                    .password(CodeGenerator.generateCode())
+                    .build();
+
+            CompanyManager companyManager = ICompanyManagerMapper.INSTANCE.toCompanyManager(model);
             companyManagerService.save(companyManager);
+
+            passwordMailProducer.sendPassword(model);
             createPersonProducer.sendNewPerson(model);
             return true;
         } catch (Exception e) {
@@ -99,11 +112,17 @@ public class AdminService extends ServiceManager<Admin,Long> {
             throw new UserManagerException(EErrorType.COMPANY_NOT_CREATED);
         }
     }
-    public Boolean createPersonnel(CreatePersonModel model) {
+    public Boolean createPersonnel(PersonnelSaveRequestDto dto) {
         try {
+            CreatePersonModel model = CreatePersonModel.builder()
+                    .email(dto.getEmail())
+                    .password(CodeGenerator.generateCode())
+                    .build();
+
             Personnel personnel = personnelService.save(IPersonnelMapper.INSTANCE.toPersonnel(model));
             personnelService.save(personnel);
             createPersonProducer.sendNewPerson(model);
+            passwordMailProducer.sendPassword(model);
             return true;
         } catch (Exception e) {
             throw new UserManagerException(EErrorType.PERSONNEL_NOT_CREATED);

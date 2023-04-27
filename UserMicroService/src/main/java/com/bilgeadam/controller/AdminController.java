@@ -40,15 +40,15 @@ public class AdminController {
         return ResponseEntity.ok(adminService.updateCompany(dto,id));
     }
     @PutMapping(CREATECOMPANYMANAGER)
-    public ResponseEntity<Boolean> createCompanyManager(@RequestBody CreatePersonModel model) {
-        return ResponseEntity.ok(adminService.createCompanyManager(model));
+    public ResponseEntity<Boolean> createCompanyManager(@RequestBody CompanyManagerSaveRequestDto dto) {
+        return ResponseEntity.ok(adminService.createCompanyManager(dto));
     }
     @PutMapping(CREATECOMPANY)
     public ResponseEntity<Boolean> createCompany(@RequestBody CompanySaveRequestDto dto) {
         return ResponseEntity.ok(adminService.createCompany(dto));
     }
     @PutMapping(CREATEPERSONNEL)
-    public ResponseEntity<Boolean> createPersonnel(@RequestBody CreatePersonModel model) {
+    public ResponseEntity<Boolean> createPersonnel(@RequestBody PersonnelSaveRequestDto model) {
         return ResponseEntity.ok(adminService.createPersonnel(model));
     }
     @GetMapping(GETALLADMIN)
