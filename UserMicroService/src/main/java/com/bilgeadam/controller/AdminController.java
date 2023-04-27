@@ -48,8 +48,8 @@ public class AdminController {
         return ResponseEntity.ok(adminService.createCompany(dto));
     }
     @PutMapping(CREATEPERSONNEL)
-    public ResponseEntity<Boolean> createPersonnel(@RequestBody PersonnelSaveRequestDto model) {
-        return ResponseEntity.ok(adminService.createPersonnel(model));
+    public ResponseEntity<Boolean> createPersonnel(@RequestBody PersonnelSaveRequestDto dto) {
+        return ResponseEntity.ok(adminService.createPersonnel(dto));
     }
     @GetMapping(GETALLADMIN)
     public ResponseEntity<List<AdminSummaryResponseDto>> findAllAdmin(String token) {
