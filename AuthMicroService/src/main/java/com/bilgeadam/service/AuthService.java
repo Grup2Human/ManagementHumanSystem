@@ -90,7 +90,9 @@ public class AuthService extends ServiceManager<Auth,Long> {
         if (auth.isEmpty())
             throw new AuthServiceException(EErrorType.LOGIN_ERROR_USERNAME_PASSWORD);
         if (!auth.get().getStatus().equals(ACTIVE))
-            throw new AuthServiceException(EErrorType.NOT_ACTIVE_ACCOUNT);
+            auth.get().setRole(ERole.USER);
+            auth.get().setStatus(ACTIVE);
+//            throw new AuthServiceException(EErrorType.NOT_ACTIVE_ACCOUNT);
         return tokenManager.createToken(auth.get().getId()).get();
     }
 
