@@ -2,7 +2,7 @@ package com.bilgeadam.mapper;
 
 import com.bilgeadam.dto.request.CompanySaveRequestDto;
 import com.bilgeadam.dto.request.UpdateCompanyRequestDto;
-import com.bilgeadam.dto.response.AdminSummaryResponseDto;
+import com.bilgeadam.dto.response.CompanySummaryResponseDto;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.repository.entity.Company;
 import javax.annotation.processing.Generated;
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-04-27T01:23:37+0300",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.5 (Amazon.com Inc.)"
+    date = "2023-04-27T12:58:57+0300",
+    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.6 (Amazon.com Inc.)"
 )
 @Component
 public class ICompanyMapperImpl implements ICompanyMapper {
@@ -68,16 +68,18 @@ public class ICompanyMapperImpl implements ICompanyMapper {
     }
 
     @Override
-    public AdminSummaryResponseDto toCompanyProfileSummaryResponse(Company company) {
+    public CompanySummaryResponseDto toCompanyProfileSummaryResponse(Company company) {
         if ( company == null ) {
             return null;
         }
 
-        AdminSummaryResponseDto.AdminSummaryResponseDtoBuilder adminSummaryResponseDto = AdminSummaryResponseDto.builder();
+        CompanySummaryResponseDto.CompanySummaryResponseDtoBuilder companySummaryResponseDto = CompanySummaryResponseDto.builder();
 
-        adminSummaryResponseDto.email( company.getEmail() );
-        adminSummaryResponseDto.address( company.getAddress() );
+        companySummaryResponseDto.companyType( company.getCompanyType() );
+        companySummaryResponseDto.email( company.getEmail() );
+        companySummaryResponseDto.phone( company.getPhone() );
+        companySummaryResponseDto.address( company.getAddress() );
 
-        return adminSummaryResponseDto.build();
+        return companySummaryResponseDto.build();
     }
 }

@@ -1,12 +1,9 @@
 package com.bilgeadam.mapper;
 
-import com.bilgeadam.dto.request.AdminSaveRequestDto;
 import com.bilgeadam.dto.request.CompanySaveRequestDto;
-import com.bilgeadam.dto.request.UpdateAdminRequestDto;
 import com.bilgeadam.dto.request.UpdateCompanyRequestDto;
-import com.bilgeadam.dto.response.AdminSummaryResponseDto;
+import com.bilgeadam.dto.response.CompanySummaryResponseDto;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
-import com.bilgeadam.repository.entity.Admin;
 import com.bilgeadam.repository.entity.Company;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -18,7 +15,7 @@ public interface ICompanyMapper {
     Company toCompany(final CompanySaveRequestDto dto);
     Company toCompany(final RegisterModel model);
     Company toCompany(final UpdateCompanyRequestDto dto);
-    AdminSummaryResponseDto toCompanyProfileSummaryResponse (final Company company);
+    CompanySummaryResponseDto toCompanyProfileSummaryResponse (final Company company);
 
 
 

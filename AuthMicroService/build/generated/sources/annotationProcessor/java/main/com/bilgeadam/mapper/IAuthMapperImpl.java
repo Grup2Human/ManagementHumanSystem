@@ -4,6 +4,7 @@ import com.bilgeadam.dto.request.RegisterRequestDto;
 import com.bilgeadam.dto.request.UserProfileSaveRequestDto;
 import com.bilgeadam.dto.response.AuthRegisterResponseDto;
 import com.bilgeadam.rabbitmq.model.ChangeStatusModel;
+import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.repository.entity.Auth;
 import javax.annotation.processing.Generated;
@@ -11,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-04-27T01:10:20+0300",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.5 (Amazon.com Inc.)"
+    date = "2023-04-27T12:14:58+0300",
+    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.6 (Amazon.com Inc.)"
 )
 @Component
 public class IAuthMapperImpl implements IAuthMapper {
@@ -27,6 +28,20 @@ public class IAuthMapperImpl implements IAuthMapper {
 
         auth.email( dto.getEmail() );
         auth.password( dto.getPassword() );
+
+        return auth.build();
+    }
+
+    @Override
+    public Auth toAuth(CreatePersonModel model) {
+        if ( model == null ) {
+            return null;
+        }
+
+        Auth.AuthBuilder<?, ?> auth = Auth.builder();
+
+        auth.email( model.getEmail() );
+        auth.password( model.getPassword() );
 
         return auth.build();
     }

@@ -7,6 +7,7 @@ import com.bilgeadam.dto.response.AuthRegisterResponseDto;
 import com.bilgeadam.exception.AuthServiceException;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.mapper.IAuthMapper;
+import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.rabbitmq.producer.ChangeStatusProducer;
 import com.bilgeadam.rabbitmq.producer.RegisterProducer;
@@ -19,6 +20,7 @@ import com.bilgeadam.utility.ServiceManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.message.AuthException;
 import java.util.List;
 import java.util.Optional;
 
@@ -114,13 +116,13 @@ public class AuthService extends ServiceManager<Auth,Long> {
         return findAll();
     }
 
-//    public Boolean createAdmin(RegisterModel model) {
-//        try {
-//            Admin admin = save(IAdminMapper.INSTANCE.toAdminProfile(model));
-//            save(admin);
-//            return true;
-//        } catch (Exception e) {
-//            throw new UserManagerException(EErrorType.USER_NOT_CREATED);
-//        }
-//    }
+    public Boolean createPerson(CreatePersonModel model) {
+        try {
+            Auth auth = save(IAuthMapper.INSTANCE.toAuth(model));
+            save(auth);
+            return true;
+        } catch (Exception e) {
+            throw new AuthServiceException(EErrorType.CREATE_ERROR);
+        }
+    }
 }

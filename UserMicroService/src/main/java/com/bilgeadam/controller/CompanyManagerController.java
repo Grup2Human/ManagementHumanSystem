@@ -1,12 +1,14 @@
 package com.bilgeadam.controller;
 
-import com.bilgeadam.dto.request.UpdateAdminRequestDto;
 import com.bilgeadam.dto.request.UpdateCompanyManagerRequestDto;
+import com.bilgeadam.dto.request.UpdateCompanyRequestDto;
 import com.bilgeadam.dto.request.UpdatePersonnelRequestDto;
-import com.bilgeadam.dto.response.AdminSummaryResponseDto;
 import com.bilgeadam.dto.response.CompanyManagerSummaryResponseDto;
-import com.bilgeadam.repository.entity.Admin;
+import com.bilgeadam.dto.response.PersonnelSummaryResponseDto;
+import com.bilgeadam.rabbitmq.model.CreatePersonModel;
+import com.bilgeadam.repository.entity.Company;
 import com.bilgeadam.repository.entity.CompanyManager;
+import com.bilgeadam.repository.entity.Personnel;
 import com.bilgeadam.service.CompanyManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +25,16 @@ public class CompanyManagerController {
 
     private final CompanyManagerService companyManagerService;
     @PutMapping(UPDATECOMPANYMANAGER)
-    public ResponseEntity<Boolean> updateCompanyManager(@RequestBody UpdateCompanyManagerRequestDto dto) {
-        return ResponseEntity.ok(companyManagerService.updateCompanyManager(dto));
+    public ResponseEntity<Boolean> updateCompanyManager(@RequestBody UpdateCompanyManagerRequestDto dto,Long id) {
+        return ResponseEntity.ok(companyManagerService.updateCompanyManager(dto,id));
     }
     @PutMapping(UPDATEPERSONNEL)
-    public ResponseEntity<Boolean> updatePersonnel(@RequestBody UpdatePersonnelRequestDto dto) {
-        return ResponseEntity.ok(companyManagerService.updatePersonnel(dto));
+    public ResponseEntity<Boolean> updatePersonnel(@RequestBody UpdatePersonnelRequestDto dto,Long id) {
+        return ResponseEntity.ok(companyManagerService.updatePersonnel(dto,id));
+    }
+    @PutMapping(UPDATECOMPANY)
+    public ResponseEntity<Boolean> updateCompany(@RequestBody UpdateCompanyRequestDto dto, Long id) {
+        return ResponseEntity.ok(companyManagerService.updateCompany(dto,id));
     }
 //    @GetMapping(GETALL)
 //    public ResponseEntity<List<CompanyManagerSummaryResponseDto>> findAll() {
@@ -37,6 +43,28 @@ public class CompanyManagerController {
 
     @GetMapping(GETCOMPANYMANAGERBYID)
     public ResponseEntity<CompanyManager> findById(String token, Long id) {
-        return ResponseEntity.ok(companyManagerService.findByIdWithToken(token,id));
+        return ResponseEntity.ok(companyManagerService.findCompanyManagerByIdWithToken(token,id));
+    }
+    @GetMapping(GETPERSONNELBYID)
+    public ResponseEntity<Personnel> findPersonnelById(String token, Long id) {
+        return ResponseEntity.ok(companyManagerService.findPersonnelByIdWithToken(token,id));
+    }
+
+    @GetMapping(GETALLCOMPANYMANAGER)
+    public ResponseEntity<List<CompanyManagerSummaryResponseDto>> findAllCompanyManager(String token) {
+        return ResponseEntity.ok(companyManagerService.findAllSummaryCompanyManager(token));
+    }
+    @GetMapping(GETALLPERSONNEL)
+    public ResponseEntity<List<PersonnelSummaryResponseDto>> findAllPersonnel(String token) {
+        return ResponseEntity.ok(companyManagerService.findAllSummaryPersonnel(token));
+    }
+
+    @PutMapping(CREATECOMPANYMANAGER)
+    public ResponseEntity<Boolean> createCompanyManager(@RequestBody CreatePersonModel model) {
+        return ResponseEntity.ok(companyManagerService.createCompanyManager(model));
+    }
+    @PutMapping(CREATEPERSONNEL)
+    public ResponseEntity<Boolean> createPersonnel(@RequestBody CreatePersonModel model) {
+        return ResponseEntity.ok(companyManagerService.createPersonnel(model));
     }
 }

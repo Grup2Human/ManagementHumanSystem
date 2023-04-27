@@ -1,7 +1,8 @@
 package com.bilgeadam.mapper;
 
 import com.bilgeadam.dto.request.PersonnelSaveRequestDto;
-import com.bilgeadam.dto.response.AdminSummaryResponseDto;
+import com.bilgeadam.dto.response.PersonnelSummaryResponseDto;
+import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.repository.entity.Personnel;
 import javax.annotation.processing.Generated;
@@ -9,11 +10,24 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-04-27T01:23:37+0300",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.5 (Amazon.com Inc.)"
+    date = "2023-04-27T12:58:57+0300",
+    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.6 (Amazon.com Inc.)"
 )
 @Component
 public class IPersonnelMapperImpl implements IPersonnelMapper {
+
+    @Override
+    public Personnel toPersonnel(CreatePersonModel model) {
+        if ( model == null ) {
+            return null;
+        }
+
+        Personnel.PersonnelBuilder<?, ?> personnel = Personnel.builder();
+
+        personnel.email( model.getEmail() );
+
+        return personnel.build();
+    }
 
     @Override
     public Personnel toPersonnel(PersonnelSaveRequestDto dto) {
@@ -44,19 +58,18 @@ public class IPersonnelMapperImpl implements IPersonnelMapper {
     }
 
     @Override
-    public AdminSummaryResponseDto toPersonnelProfileSummaryResponse(Personnel personnel) {
+    public PersonnelSummaryResponseDto toPersonnelProfileSummaryResponse(Personnel personnel) {
         if ( personnel == null ) {
             return null;
         }
 
-        AdminSummaryResponseDto.AdminSummaryResponseDtoBuilder adminSummaryResponseDto = AdminSummaryResponseDto.builder();
+        PersonnelSummaryResponseDto.PersonnelSummaryResponseDtoBuilder personnelSummaryResponseDto = PersonnelSummaryResponseDto.builder();
 
-        adminSummaryResponseDto.name( personnel.getName() );
-        adminSummaryResponseDto.surname( personnel.getSurname() );
-        adminSummaryResponseDto.email( personnel.getEmail() );
-        adminSummaryResponseDto.photo( personnel.getPhoto() );
-        adminSummaryResponseDto.address( personnel.getAddress() );
+        personnelSummaryResponseDto.name( personnel.getName() );
+        personnelSummaryResponseDto.surname( personnel.getSurname() );
+        personnelSummaryResponseDto.email( personnel.getEmail() );
+        personnelSummaryResponseDto.companyId( personnel.getCompanyId() );
 
-        return adminSummaryResponseDto.build();
+        return personnelSummaryResponseDto.build();
     }
 }
