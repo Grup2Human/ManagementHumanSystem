@@ -17,6 +17,17 @@ public class Admin extends Person{
     String id;
     private Long adminId;
     private Long authId;
+    private String name;
+    private String nameSecond;
+    private String surname;
+    private String surnameSecond;
+    private String photo;
+    private String email;
+    private String birthday;
+    private String birthPlace;
+    private Long TC;
+    private String address;
+    private String phoneNumber;
     @Builder.Default
     private EStatus status=EStatus.PENDING;
 }
