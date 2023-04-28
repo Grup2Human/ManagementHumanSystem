@@ -13,7 +13,7 @@ public interface ICompanyManagerRepository extends JpaRepository<CompanyManager,
 
     Optional<CompanyManager> findOptionalByAuthId(Long authId);
     Optional<CompanyManager> findOptionalByEmail(String email);
-    @Query(value = "select COUNT(a)>0 from Admin a where a.email=?1")
+    @Query(value = "select COUNT(a.email)>0 from Admin a where a.email=?1")
     boolean isEmail(String email);
 
     Optional<CompanyManager> findOptionalById(Long id);
