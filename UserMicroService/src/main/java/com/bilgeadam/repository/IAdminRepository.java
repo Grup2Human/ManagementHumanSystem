@@ -23,5 +23,6 @@ public interface IAdminRepository extends JpaRepository<Admin,Long> {
 //     * @return
 //     */
     Optional<Admin> findOptionalByAuthId(Long authId);
+    Optional<Admin> findOptionalByEmail(String email);
 
 }

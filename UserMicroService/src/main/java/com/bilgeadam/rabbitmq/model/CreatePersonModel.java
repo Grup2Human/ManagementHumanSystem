@@ -1,5 +1,6 @@
 package com.bilgeadam.rabbitmq.model;
 
+import com.bilgeadam.repository.enums.ERole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +16,5 @@ public class CreatePersonModel implements Serializable {
 
     private String email;
     private String password;
+    private ERole role;
 }
