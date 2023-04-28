@@ -70,7 +70,6 @@ public class AdminService extends ServiceManager<Admin,Long> {
         save(IAdminMapper.INSTANCE.toAdmin(dto));
         return true;
     }
-
     public Boolean createAdmin(RegisterModel model) {
 //        Optional<Admin> admn = repository.findOptionalByEmail(model.getEmail());
 //        if(!admn.isEmpty())
@@ -88,7 +87,6 @@ public class AdminService extends ServiceManager<Admin,Long> {
         }
         return true;
     }
-
     public Boolean createCompanyManager(CompanyManagerSaveRequestDto dto) {
         Optional<CompanyManager> cM = companyManagerRepository.findOptionalByEmail(dto.getEmail());
         if(cM.isPresent())
@@ -346,7 +344,6 @@ public class AdminService extends ServiceManager<Admin,Long> {
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         return userProfile.get();
     }
-
     public List<AdminSummaryResponseDto> findAllSummaryAdmin(String token) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
@@ -369,7 +366,6 @@ public class AdminService extends ServiceManager<Admin,Long> {
         });
         return companySummaryResponseDtoList;
     }
-
     public List<PersonnelSummaryResponseDto> findAllSummaryPersonnel(String token) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
@@ -381,7 +377,6 @@ public class AdminService extends ServiceManager<Admin,Long> {
         });
         return personnelSummaryResponseDtoList;
     }
-
     public List<CompanyManagerSummaryResponseDto> findAllSummaryCompanyManager(String token) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())

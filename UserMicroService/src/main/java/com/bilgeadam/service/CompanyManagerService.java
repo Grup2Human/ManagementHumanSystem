@@ -16,6 +16,7 @@ import com.bilgeadam.repository.IPersonnelRepository;
 import com.bilgeadam.repository.entity.Company;
 import com.bilgeadam.repository.entity.CompanyManager;
 import com.bilgeadam.repository.entity.Personnel;
+import com.bilgeadam.repository.enums.ERole;
 import com.bilgeadam.utility.CodeGenerator;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
@@ -109,7 +110,6 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         companyService.update(companyProfile.get());
         return true;
     }
-
     public Boolean updatePersonnel(UpdatePersonnelRequestDto dto, Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(dto.getToken());
         if (authId.isEmpty()) {
@@ -137,7 +137,6 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         personnelService.update(personnelProfile.get());
         return true;
     }
-
     public CompanyManager findCompanyManagerByIdWithToken(String token, Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
@@ -156,7 +155,6 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         return userProfile.get();
     }
-
     public List<PersonnelSummaryResponseDto> findAllSummaryPersonnel(String token) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
@@ -168,7 +166,6 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         });
         return personnelSummaryResponseDtoList;
     }
-
     public List<CompanyManagerSummaryResponseDto> findAllSummaryCompanyManager(String token) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         if (authId.isEmpty())
@@ -181,11 +178,26 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         return companyManagerSummaryResponseDtoList;
     }
     public Boolean createCompanyManager(CompanyManagerSaveRequestDto dto) {
+        Optional<CompanyManager> cM = companyManagerRepository.findOptionalByEmail(dto.getEmail());
+        if(cM.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+        Optional<Personnel> personnel = personnelRepository.findOptionalByEmail(dto.getEmail());
+        if(personnel.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+        Optional<Company> company = companyRepository.findOptionalByEmail(dto.getEmail());
+        if(company.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+//        if (companyManagerRepository.isEmail(dto.getEmail()))
+//            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
 
         try {
             CreatePersonModel model = CreatePersonModel.builder()
                     .email(dto.getEmail())
                     .password(CodeGenerator.generateCode())
+                    .role(ERole.COMPANYMANAGER)
                     .build();
 
             CompanyManager companyManager = ICompanyManagerMapper.INSTANCE.toCompanyManager(model);
@@ -198,12 +210,28 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
             throw new UserManagerException(EErrorType.COMPANY_MANAGER_NOT_CREATED);
         }
     }
-
     public Boolean createPersonnel(PersonnelSaveRequestDto dto) {
+        Optional<CompanyManager> cM = companyManagerRepository.findOptionalByEmail(dto.getEmail());
+        if(cM.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+        Optional<Personnel> personnel1 = personnelRepository.findOptionalByEmail(dto.getEmail());
+        if(personnel1.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+        Optional<Company> company = companyRepository.findOptionalByEmail(dto.getEmail());
+        if(company.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+//        Optional<Personnel> prs = personnelRepository.findOptionalByEmail(dto.getEmail());
+//        if(!prs.isEmpty())
+//            throw new UserManagerException(EErrorType.EMAIL_DUPLICATE);
+        if (personnelRepository.isEmail(dto.getEmail()))
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
         try {
             CreatePersonModel model = CreatePersonModel.builder()
                     .email(dto.getEmail())
                     .password(CodeGenerator.generateCode())
+                    .role(ERole.PERSONNEL)
                     .build();
 
             Personnel personnel = personnelService.save(IPersonnelMapper.INSTANCE.toPersonnel(model));
