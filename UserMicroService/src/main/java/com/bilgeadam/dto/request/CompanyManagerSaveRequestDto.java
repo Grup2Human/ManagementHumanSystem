@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // Parametresiz constructor tanımlar
 @AllArgsConstructor // 1....n kadar olan tüm parametreli constructorları tanımlar
 public class CompanyManagerSaveRequestDto {
+
     String email;
 }

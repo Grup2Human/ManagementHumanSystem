@@ -90,11 +90,21 @@ public class AdminService extends ServiceManager<Admin,Long> {
     }
 
     public Boolean createCompanyManager(CompanyManagerSaveRequestDto dto) {
-//        Optional<CompanyManager> cM = companyManagerRepository.findOptionalByEmail(dto.getEmail());
-//        if(!cM.isEmpty())
-//            throw new UserManagerException(EErrorType.EMAIL_DUPLICATE);
-        if (companyManagerRepository.isEmail(dto.getEmail()))
+        Optional<CompanyManager> cM = companyManagerRepository.findOptionalByEmail(dto.getEmail());
+        if(cM.isPresent())
             throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+        Optional<Personnel> personnel = personnelRepository.findOptionalByEmail(dto.getEmail());
+        if(personnel.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+        Optional<Company> company = companyRepository.findOptionalByEmail(dto.getEmail());
+        if(company.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+//        if (companyManagerRepository.isEmail(dto.getEmail()))
+//            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
         try {
             CreatePersonModel model = CreatePersonModel.builder()
                     .email(dto.getEmail())
@@ -113,11 +123,22 @@ public class AdminService extends ServiceManager<Admin,Long> {
         }
     }
     public Boolean createCompany(CompanySaveRequestDto dto) {
+        Optional<CompanyManager> cM = companyManagerRepository.findOptionalByEmail(dto.getEmail());
+        if(cM.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+        Optional<Personnel> personnel = personnelRepository.findOptionalByEmail(dto.getEmail());
+        if(personnel.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+        Optional<Company> company1 = companyRepository.findOptionalByEmail(dto.getEmail());
+        if(company1.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
 //        Optional<Company> com = companyRepository.findOptionalByEmail(dto.getEmail());
 //        if(!com.isEmpty())
 //            throw new UserManagerException(EErrorType.EMAIL_DUPLICATE);
-        if (companyRepository.isEmail(dto.getEmail()))
-            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+//        if (companyRepository.isEmail(dto.getEmail()))
+//            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
         try {
             Company company = companyService.save(ICompanyMapper.INSTANCE.toCompany(dto));
             companyService.save(company);
@@ -127,6 +148,17 @@ public class AdminService extends ServiceManager<Admin,Long> {
         }
     }
     public Boolean createPersonnel(PersonnelSaveRequestDto dto) {
+        Optional<CompanyManager> cM = companyManagerRepository.findOptionalByEmail(dto.getEmail());
+        if(cM.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+        Optional<Personnel> personnel1 = personnelRepository.findOptionalByEmail(dto.getEmail());
+        if(personnel1.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+
+        Optional<Company> company = companyRepository.findOptionalByEmail(dto.getEmail());
+        if(company.isPresent())
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
 //        Optional<Personnel> prs = personnelRepository.findOptionalByEmail(dto.getEmail());
 //        if(!prs.isEmpty())
 //            throw new UserManagerException(EErrorType.EMAIL_DUPLICATE);
