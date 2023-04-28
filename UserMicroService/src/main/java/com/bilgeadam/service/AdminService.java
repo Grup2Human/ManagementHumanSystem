@@ -25,6 +25,7 @@ import com.bilgeadam.repository.entity.Admin;
 import com.bilgeadam.repository.entity.Company;
 import com.bilgeadam.repository.entity.CompanyManager;
 import com.bilgeadam.repository.entity.Personnel;
+import com.bilgeadam.repository.enums.ERole;
 import com.bilgeadam.utility.CodeGenerator;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
@@ -71,6 +72,9 @@ public class AdminService extends ServiceManager<Admin,Long> {
     }
 
     public Boolean createAdmin(RegisterModel model) {
+//        Optional<Admin> admn = repository.findOptionalByEmail(model.getEmail());
+//        if(!admn.isEmpty())
+//            throw new UserManagerException(EErrorType.EMAIL_DUPLICATE);
         try {
             Admin admin = IAdminMapper.INSTANCE.toAdminProfile(model);
             save(admin);
@@ -86,11 +90,16 @@ public class AdminService extends ServiceManager<Admin,Long> {
     }
 
     public Boolean createCompanyManager(CompanyManagerSaveRequestDto dto) {
-
+//        Optional<CompanyManager> cM = companyManagerRepository.findOptionalByEmail(dto.getEmail());
+//        if(!cM.isEmpty())
+//            throw new UserManagerException(EErrorType.EMAIL_DUPLICATE);
+        if (companyManagerRepository.isEmail(dto.getEmail()))
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
         try {
             CreatePersonModel model = CreatePersonModel.builder()
                     .email(dto.getEmail())
                     .password(CodeGenerator.generateCode())
+                    .role(ERole.COMPANYMANAGER)
                     .build();
 
             CompanyManager companyManager = ICompanyManagerMapper.INSTANCE.toCompanyManager(model);
@@ -104,6 +113,11 @@ public class AdminService extends ServiceManager<Admin,Long> {
         }
     }
     public Boolean createCompany(CompanySaveRequestDto dto) {
+//        Optional<Company> com = companyRepository.findOptionalByEmail(dto.getEmail());
+//        if(!com.isEmpty())
+//            throw new UserManagerException(EErrorType.EMAIL_DUPLICATE);
+        if (companyRepository.isEmail(dto.getEmail()))
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
         try {
             Company company = companyService.save(ICompanyMapper.INSTANCE.toCompany(dto));
             companyService.save(company);
@@ -113,10 +127,16 @@ public class AdminService extends ServiceManager<Admin,Long> {
         }
     }
     public Boolean createPersonnel(PersonnelSaveRequestDto dto) {
+//        Optional<Personnel> prs = personnelRepository.findOptionalByEmail(dto.getEmail());
+//        if(!prs.isEmpty())
+//            throw new UserManagerException(EErrorType.EMAIL_DUPLICATE);
+        if (personnelRepository.isEmail(dto.getEmail()))
+            throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
         try {
             CreatePersonModel model = CreatePersonModel.builder()
                     .email(dto.getEmail())
                     .password(CodeGenerator.generateCode())
+                    .role(ERole.PERSONNEL)
                     .build();
 
             Personnel personnel = personnelService.save(IPersonnelMapper.INSTANCE.toPersonnel(model));

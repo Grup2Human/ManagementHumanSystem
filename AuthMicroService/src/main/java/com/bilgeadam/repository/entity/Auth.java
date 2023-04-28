@@ -27,7 +27,7 @@ public class Auth extends BaseEntity{
     private String activationCode;
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private ERole role = ERole.USER;
+    private ERole role = ERole.PERSONNEL;
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private EStatus status=EStatus.PENDING;
