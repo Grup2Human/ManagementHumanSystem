@@ -1,5 +1,6 @@
 package com.bilgeadam.rabbitmq.producer;
 
+import com.bilgeadam.rabbitmq.model.CreatePersonMailModel;
 import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,7 +20,7 @@ public class PasswordMailProducer {
     private final RabbitTemplate rabbitTemplate;
 
     /**   Kuyruga ekleyecegim veriyi gonderiyoruz:  */
-    public void sendPassword(CreatePersonModel model){
+    public void sendPassword(CreatePersonMailModel model){
         rabbitTemplate.convertAndSend(directExchange,passwordMailBindingKey,model);
     }
 }

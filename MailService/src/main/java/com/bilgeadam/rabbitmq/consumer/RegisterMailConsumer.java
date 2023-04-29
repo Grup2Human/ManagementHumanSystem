@@ -1,5 +1,6 @@
 package com.bilgeadam.rabbitmq.consumer;
 
+import com.bilgeadam.rabbitmq.model.CreatePersonMailModel;
 import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import com.bilgeadam.service.MailSenderService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class RegisterMailConsumer {
 
     // application.yml'da adı verilen kuyrugu dinleyecek:
     @RabbitListener(queues = "${rabbitmq.queuepasswordmail}")
-    public void sendPassword(CreatePersonModel model){
+    public void sendPassword(CreatePersonMailModel model){
         log.info("Model {}",model.toString());
         mailSenderService.sendMail(model);
     }
