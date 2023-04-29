@@ -7,6 +7,7 @@ import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
 import com.bilgeadam.mapper.ICompanyManagerMapper;
 import com.bilgeadam.mapper.IPersonnelMapper;
+import com.bilgeadam.rabbitmq.model.CreatePersonMailModel;
 import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import com.bilgeadam.rabbitmq.producer.CreatePersonProducer;
 import com.bilgeadam.rabbitmq.producer.PasswordMailProducer;
@@ -200,10 +201,16 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
                     .role(ERole.COMPANYMANAGER)
                     .build();
 
+
+            CreatePersonMailModel mailModel = CreatePersonMailModel.builder()
+                    .email(dto.getEmail())
+                    .password(model.getPassword())
+                    .build();
+
             CompanyManager companyManager = ICompanyManagerMapper.INSTANCE.toCompanyManager(model);
             save(companyManager);
 
-            passwordMailProducer.sendPassword(model);
+            passwordMailProducer.sendPassword(mailModel);
             createPersonProducer.sendNewPerson(model);
             return true;
         } catch (Exception e) {
@@ -234,10 +241,15 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
                     .role(ERole.PERSONNEL)
                     .build();
 
+            CreatePersonMailModel mailModel = CreatePersonMailModel.builder()
+                    .email(dto.getEmail())
+                    .password(model.getPassword())
+                    .build();
+
             Personnel personnel = personnelService.save(IPersonnelMapper.INSTANCE.toPersonnel(model));
             personnelService.save(personnel);
             createPersonProducer.sendNewPerson(model);
-            passwordMailProducer.sendPassword(model);
+            passwordMailProducer.sendPassword(mailModel);
             return true;
         } catch (Exception e) {
             throw new UserManagerException(EErrorType.PERSONNEL_NOT_CREATED);

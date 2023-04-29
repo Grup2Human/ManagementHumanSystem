@@ -119,8 +119,12 @@ public class AuthService extends ServiceManager<Auth,Long> {
     }
 
     public Boolean createPerson(CreatePersonModel model) {
+        Optional<Auth> cM = repository.findOptionalByEmail(model.getEmail());
+        if(cM.isPresent())
+            return false;
+            //throw new AuthServiceException(EErrorType.REGISTER_ERROR_EMAIL);
         try {
-            Auth auth = save(IAuthMapper.INSTANCE.toAuth(model));
+            Auth auth = IAuthMapper.INSTANCE.toAuth(model);
             save(auth);
             return true;
         } catch (Exception e) {
