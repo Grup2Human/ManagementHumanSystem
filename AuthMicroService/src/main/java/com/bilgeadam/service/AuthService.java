@@ -89,9 +89,9 @@ public class AuthService extends ServiceManager<Auth,Long> {
         Optional<Auth> auth = repository.findOptionalByEmailAndPassword(dto.getEmail(), dto.getPassword());
         if (auth.isEmpty())
             throw new AuthServiceException(EErrorType.LOGIN_ERROR_USERNAME_PASSWORD);
-        if (!auth.get().getStatus().equals(ACTIVE))
-            auth.get().setRole(ERole.PERSONNEL);
-            auth.get().setStatus(ACTIVE);
+//        if (!auth.get().getStatus().equals(ACTIVE))
+//            auth.get().setRole(ERole.PERSONNEL);
+//            auth.get().setStatus(ACTIVE);
 //            throw new AuthServiceException(EErrorType.NOT_ACTIVE_ACCOUNT);
         return tokenManager.createToken(auth.get().getId()).get();
     }

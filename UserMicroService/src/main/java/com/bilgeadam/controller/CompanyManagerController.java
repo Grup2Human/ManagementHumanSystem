@@ -2,6 +2,7 @@ package com.bilgeadam.controller;
 
 import com.bilgeadam.dto.request.*;
 import com.bilgeadam.dto.response.CompanyManagerSummaryResponseDto;
+import com.bilgeadam.dto.response.DemandsResponseDto;
 import com.bilgeadam.dto.response.PersonnelSummaryResponseDto;
 import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import com.bilgeadam.repository.entity.Company;
@@ -65,5 +66,9 @@ public class CompanyManagerController {
     @PutMapping(CREATEPERSONNEL)
     public ResponseEntity<Boolean> createPersonnel(@RequestBody PersonnelSaveRequestDto dto) {
         return ResponseEntity.ok(companyManagerService.createPersonnel(dto));
+    }
+    @GetMapping(GETALLPERSONNELLEAVEREQUESTS)
+    public ResponseEntity<List<DemandsResponseDto>> findAllLeaveRequests (@RequestBody String token) {
+        return ResponseEntity.ok(companyManagerService.findAllLeaveRequests(token));
     }
 }

@@ -2,10 +2,12 @@ package com.bilgeadam.service;
 
 import com.bilgeadam.dto.request.*;
 import com.bilgeadam.dto.response.CompanyManagerSummaryResponseDto;
+import com.bilgeadam.dto.response.DemandsResponseDto;
 import com.bilgeadam.dto.response.PersonnelSummaryResponseDto;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
 import com.bilgeadam.mapper.ICompanyManagerMapper;
+import com.bilgeadam.mapper.ILeaveMapper;
 import com.bilgeadam.mapper.IPersonnelMapper;
 import com.bilgeadam.rabbitmq.model.CreatePersonMailModel;
 import com.bilgeadam.rabbitmq.model.CreatePersonModel;
@@ -13,9 +15,11 @@ import com.bilgeadam.rabbitmq.producer.CreatePersonProducer;
 import com.bilgeadam.rabbitmq.producer.PasswordMailProducer;
 import com.bilgeadam.repository.ICompanyManagerRepository;
 import com.bilgeadam.repository.ICompanyRepository;
+import com.bilgeadam.repository.ILeaveRepository;
 import com.bilgeadam.repository.IPersonnelRepository;
 import com.bilgeadam.repository.entity.Company;
 import com.bilgeadam.repository.entity.CompanyManager;
+import com.bilgeadam.repository.entity.Leave;
 import com.bilgeadam.repository.entity.Personnel;
 import com.bilgeadam.repository.enums.ERole;
 import com.bilgeadam.utility.CodeGenerator;
@@ -38,9 +42,10 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
     private final PersonnelService personnelService;
     private final CreatePersonProducer createPersonProducer;
     private final PasswordMailProducer passwordMailProducer;
+    private final LeaveService leaveService;
 
 
-    public CompanyManagerService(ICompanyManagerRepository companyManagerRepository, JwtTokenManager tokenManager, ICompanyRepository companyRepository, CompanyService companyService, IPersonnelRepository personnelRepository, PersonnelService personnelService, CreatePersonProducer createPersonProducer, PasswordMailProducer passwordMailProducer) {
+    public CompanyManagerService(ICompanyManagerRepository companyManagerRepository, JwtTokenManager tokenManager, ICompanyRepository companyRepository, CompanyService companyService, IPersonnelRepository personnelRepository, PersonnelService personnelService, CreatePersonProducer createPersonProducer, PasswordMailProducer passwordMailProducer, LeaveService leaveService) {
         super(companyManagerRepository);
         this.companyManagerRepository = companyManagerRepository;
         this.tokenManager = tokenManager;
@@ -50,6 +55,7 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         this.personnelService = personnelService;
         this.createPersonProducer = createPersonProducer;
         this.passwordMailProducer = passwordMailProducer;
+        this.leaveService = leaveService;
     }
 
 //    public Boolean createPersonnel(RegisterModel model) {
@@ -255,7 +261,20 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
             throw new UserManagerException(EErrorType.PERSONNEL_NOT_CREATED);
         }
     }
-
+    public List<DemandsResponseDto> findAllLeaveRequests (String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        List<Leave> leavelist = leaveService.findAll();
+        if (leavelist.size()==0)
+            throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
+        //---------------BUraya filtreleme eklemeliyiz
+        List<DemandsResponseDto> demandsResponseDtoList = new ArrayList<>();
+        leavelist.forEach(x -> {
+            demandsResponseDtoList.add(ILeaveMapper.INSTANCE.todemandsResponseDto(x));
+        });
+        return demandsResponseDtoList;
+    }
 //    public List<CompanyManagerSummaryResponseDto> findAllSummary() {
 //        List<CompanyManager> companyManager = findAll();
 //        List<CompanyManagerSummaryResponseDto> CompanyManagerSummaryResponseDtoList = new ArrayList<>();
