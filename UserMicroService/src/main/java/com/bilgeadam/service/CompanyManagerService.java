@@ -21,6 +21,7 @@ import com.bilgeadam.repository.entity.Company;
 import com.bilgeadam.repository.entity.CompanyManager;
 import com.bilgeadam.repository.entity.Leave;
 import com.bilgeadam.repository.entity.Personnel;
+import com.bilgeadam.repository.enums.ELeaveApprovalStatus;
 import com.bilgeadam.repository.enums.ERole;
 import com.bilgeadam.utility.CodeGenerator;
 import com.bilgeadam.utility.JwtTokenManager;
@@ -270,7 +271,9 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
             throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
         //---------------BUraya filtreleme eklemeliyiz
         List<DemandsResponseDto> demandsResponseDtoList = new ArrayList<>();
-        leavelist.forEach(x -> {
+        leavelist.stream()
+                .filter(a->/*a.getCompanyManagerId()==authId.get() &&*/ a.getELeaveApprovalStatus().equals(ELeaveApprovalStatus.PENDINGAPPROVAL))
+                .forEach(x -> {
             demandsResponseDtoList.add(ILeaveMapper.INSTANCE.todemandsResponseDto(x));
         });
         return demandsResponseDtoList;

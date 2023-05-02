@@ -68,7 +68,7 @@ public class CompanyManagerController {
         return ResponseEntity.ok(companyManagerService.createPersonnel(dto));
     }
     @GetMapping(GETALLPERSONNELLEAVEREQUESTS)
-    public ResponseEntity<List<DemandsResponseDto>> findAllLeaveRequests (@RequestBody String token) {
+    public ResponseEntity<List<DemandsResponseDto>> findAllLeaveRequests (String token) {
         return ResponseEntity.ok(companyManagerService.findAllLeaveRequests(token));
     }
 }

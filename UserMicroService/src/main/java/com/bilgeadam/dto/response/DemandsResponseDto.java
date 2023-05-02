@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 @Builder // Builder, bir sınıftan nesne türetmek için özel oluşturulmuş bir method
 @Data // Data,get, set methodlarını tanımlar
 @NoArgsConstructor // Parametresiz constructor tanımlar
@@ -13,5 +16,7 @@ import lombok.NoArgsConstructor;
 public class DemandsResponseDto {
     private Long personnelId;
     //private Long companyManagerId;
-    private ELeaveApprovalStatus eLeaveApprovalStatus;
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private ELeaveApprovalStatus eLeaveApprovalStatus = ELeaveApprovalStatus.PENDINGAPPROVAL;
 }
