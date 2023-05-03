@@ -9,6 +9,7 @@ import com.bilgeadam.exception.UserManagerException;
 import com.bilgeadam.mapper.ICompanyManagerMapper;
 import com.bilgeadam.mapper.ILeaveMapper;
 import com.bilgeadam.mapper.IPersonnelMapper;
+import com.bilgeadam.rabbitmq.model.AddAuthIdModel;
 import com.bilgeadam.rabbitmq.model.CreatePersonMailModel;
 import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import com.bilgeadam.rabbitmq.producer.CreatePersonProducer;
@@ -269,7 +270,7 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         List<Leave> leavelist = leaveService.findAll();
         if (leavelist.size()==0)
             throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
-        //---------------BUraya filtreleme eklemeliyiz
+        //---------------Buraya filtreleme eklemeliyiz
         List<DemandsResponseDto> demandsResponseDtoList = new ArrayList<>();
         leavelist.stream()
                 .filter(a->/*a.getCompanyManagerId()==authId.get() &&*/ a.getELeaveApprovalStatus().equals(ELeaveApprovalStatus.PENDINGAPPROVAL))
@@ -287,7 +288,17 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
 //        });
 //        return CompanyManagerSummaryResponseDtoList;
 //    }
+      public Boolean createAuthId(AddAuthIdModel model) {
+          System.out.println(model.getAuthId());
+          System.out.println("--------------------------");
+          Optional<CompanyManager> companyManager = companyManagerRepository.findOptionalByEmail(model.getEmail());
+          if(companyManager.isEmpty())
+              throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+          companyManager.get().setAuthId(model.getAuthId());
+              update(companyManager.get());
 
+        return true;
+      }
 
 
 }

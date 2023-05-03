@@ -41,6 +41,9 @@ public class RabbitConfig {
     @Value("${rabbitmq.queuepasswordmail}")
     private String queuePasswordMail;  // (kuyruk ismi) bu kuyruga baglayacagiz
 
+    @Value("${rabbitmq.authidqueue}")
+    private String authIdQueue;
+
 
     /**  Exchange oluşturalım:  */
     @Bean // singleton yapıda, altta donen DirectExchange'i yonetmek için bean ekliyoruz
@@ -72,4 +75,9 @@ public class RabbitConfig {
     public Binding bindingPasswordMail(final Queue passwordMailQueue, final DirectExchange exchangeMail){
         return BindingBuilder.bind(passwordMailQueue).to(exchangeMail).with(passwordMailBindingKey);
     }
+    @Bean
+    Queue authIdQueue() {
+        return new Queue(authIdQueue);
+    } //Auth Göndermek için Queue Gönderiyoruz
+
 }
