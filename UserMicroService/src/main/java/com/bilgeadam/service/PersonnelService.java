@@ -2,6 +2,7 @@ package com.bilgeadam.service;
 
 import com.bilgeadam.dto.request.CreateLeaveRequestDto;
 import com.bilgeadam.dto.request.UpdatePersonnelRequestDto;
+import com.bilgeadam.dto.response.DemandsResponseDto;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
 import com.bilgeadam.mapper.ILeaveMapper;
@@ -10,13 +11,13 @@ import com.bilgeadam.repository.IPersonnelRepository;
 import com.bilgeadam.repository.entity.CompanyManager;
 import com.bilgeadam.repository.entity.Leave;
 import com.bilgeadam.repository.entity.Personnel;
+import com.bilgeadam.repository.enums.ELeaveApprovalStatus;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PersonnelService extends ServiceManager<Personnel,Long> {
@@ -64,7 +65,7 @@ public class PersonnelService extends ServiceManager<Personnel,Long> {
         if (authId.isEmpty()) {
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
         }
-        Optional<Personnel> personnel = iPersonnelRepository.findOptionalByEmail(dto.getEmail());
+        Optional<Personnel> personnel = iPersonnelRepository.findOptionalByAuthId(authId.get());
         if (personnel.isEmpty()) {
             throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         }
@@ -102,5 +103,55 @@ public class PersonnelService extends ServiceManager<Personnel,Long> {
         personnel.get().setAuthId(model.getAuthId());
         update(personnel.get());
         return true;
+    }
+//    public List<DemandsResponseDto> findAllLeaveRequests (String token) {
+//        Optional<Long> authId = tokenManager.getIdFromToken(token);
+//        System.out.println(authId.get());
+//        if (authId.isEmpty())
+//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+//        List<Leave> leavelist = leaveService.findAll();
+//        if (leavelist.size()==0)
+//            throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
+//        //---------------Buraya filtreleme eklemeliyiz
+//        List<DemandsResponseDto> demandsResponseDtoList = new ArrayList<>();
+//        Optional<Personnel> personnel= iPersonnelRepository.findOptionalByAuthId(authId.get());
+//
+//        if(personnel.isEmpty())
+//            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+//
+//        leavelist.stream()
+//                .filter(a-> a.getPersonnelId()==personnel.get().getId())
+//                .forEach(x -> {
+//                    demandsResponseDtoList.add(ILeaveMapper.INSTANCE.todemandsResponseDto(x));
+//                });
+//        return demandsResponseDtoList;
+//    }
+
+    public List<Leave> findAllLeaveRequests2 (String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        System.out.println(authId.get());
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        List<Leave> leavelist = leaveService.findAll();
+        if (leavelist.size()==0)
+            throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
+        //---------------Buraya filtreleme eklemeliyiz
+        List<Leave> leaveList2 = new ArrayList<>();
+        Optional<Personnel> personnel= iPersonnelRepository.findOptionalByAuthId(authId.get());
+
+        if(personnel.isEmpty())
+            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+
+        leavelist.stream()
+                .filter(a-> a.getPersonnelId()==personnel.get().getId())
+                .sorted(Comparator.comparing(
+                        (Leave a) -> a.getELeaveApprovalStatus() == ELeaveApprovalStatus.PENDINGAPPROVAL ? 0 : 1).reversed()
+                        // sort by status, with PENDING first
+                .thenComparingLong(Leave::getCreateat).reversed())// then sort by descending createat
+                //.sorted(Comparator.comparingLong(Leave::getCreateat).reversed())
+                .forEach(x -> {
+                    leaveList2.add(x);
+                });
+        return leaveList2;
     }
 }

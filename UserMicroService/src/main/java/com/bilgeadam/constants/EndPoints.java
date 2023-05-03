@@ -13,6 +13,7 @@ public class EndPoints {
     public static final String COMPANYMANAGER = "/companymanager";
     public static final String PERSONNEL = "/personnel";
     public static final String CREATELEAVEREQUEST = "/createleaverequest";
+    public static final String FINDALLLEAVEREQUEST ="/findallleaverequest";
     public static final String SAVE = "/save";
     public static final String UPDATEADMIN = "/updateadmin";
     public static final String UPDATEPERSONNEL = "/updatepersonnel";
@@ -22,8 +23,7 @@ public class EndPoints {
     public static final String CREATECOMPANY= "/createcompany";
     public static final String CREATEPERSONNEL= "/createpersonnel";
     public static final String GETALLPERSONNELLEAVEREQUESTS = "/getallpersonnelleaverequests";
-    public static final String GETALLCOMPANYMANAGERLEAVEREQUESTS = "/getallcompanymanagerleaverequests";
-
+    public static final String PERSONNELLEAVEAPPROVAL = "/personnelleaveapproval";
 
     public static final String DELETE = "/delete";
     public static final String GETALLADMIN = "/getalladmin";

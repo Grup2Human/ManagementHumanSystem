@@ -29,7 +29,9 @@ import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +49,7 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
     private final LeaveService leaveService;
 
 
+
     public CompanyManagerService(ICompanyManagerRepository companyManagerRepository, JwtTokenManager tokenManager, ICompanyRepository companyRepository, CompanyService companyService, IPersonnelRepository personnelRepository, PersonnelService personnelService, CreatePersonProducer createPersonProducer, PasswordMailProducer passwordMailProducer, LeaveService leaveService) {
         super(companyManagerRepository);
         this.companyManagerRepository = companyManagerRepository;
@@ -59,16 +62,6 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         this.passwordMailProducer = passwordMailProducer;
         this.leaveService = leaveService;
     }
-
-//    public Boolean createPersonnel(RegisterModel model) {
-//        try {
-//            Personnel personnel = save(IPersonnelMapper.INSTANCE.toPersonnel(model));
-//            save(personnel);
-//            return true;
-//        } catch (Exception e) {
-//            throw new UserManagerException(EErrorType.USER_NOT_CREATED);
-//        }
-//    }
 
     public Boolean updateCompanyManager(UpdateCompanyManagerRequestDto dto, Long id) {
         Optional<Long> authId = tokenManager.getIdFromToken(dto.getToken());
@@ -263,32 +256,26 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
             throw new UserManagerException(EErrorType.PERSONNEL_NOT_CREATED);
         }
     }
-    public List<DemandsResponseDto> findAllLeaveRequests (String token) {
+
+    public List<DemandsResponseDto> findAllLeaveRequests(String token) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         System.out.println(authId.get());
         if (authId.isEmpty())
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
         List<Leave> leavelist = leaveService.findAll();
-        if (leavelist.size()==0)
+        if (leavelist.size() == 0)
             throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
         //---------------Buraya filtreleme eklemeliyiz
         List<DemandsResponseDto> demandsResponseDtoList = new ArrayList<>();
         leavelist.stream()
-                .filter(a-> a.getCompanyManagerId()==authId.get() && a.getELeaveApprovalStatus().equals(ELeaveApprovalStatus.PENDINGAPPROVAL))
+                .filter(a -> a.getCompanyManagerId() == authId.get() && a.getELeaveApprovalStatus().equals(ELeaveApprovalStatus.PENDINGAPPROVAL))
+                .sorted(Comparator.comparingLong(Leave::getCreateat)) // sort by descending createat
                 .forEach(x -> {
-            demandsResponseDtoList.add(ILeaveMapper.INSTANCE.todemandsResponseDto(x));
-        });
+                    demandsResponseDtoList.add(ILeaveMapper.INSTANCE.todemandsResponseDto(x));
+                });
         return demandsResponseDtoList;
     }
-//    public List<CompanyManagerSummaryResponseDto> findAllSummary() {
-//        List<CompanyManager> companyManager = findAll();
-//        List<CompanyManagerSummaryResponseDto> CompanyManagerSummaryResponseDtoList = new ArrayList<>();
-//        companyManager.forEach(x-> {
-//            CompanyManagerSummaryResponseDtoList
-//                    .add(ICompanyManagerMapper.INSTANCE.toCompanyManagerProfileSummaryResponse(x));
-//        });
-//        return CompanyManagerSummaryResponseDtoList;
-//    }
+
       public Boolean createAuthId(AddAuthIdModel model) {
           System.out.println(model.getAuthId());
           System.out.println("------------------------------");
@@ -300,6 +287,32 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
 
         return true;
       }
+      public Boolean leaveApproval(String token,Long leaveId,String onay){
+          Optional<Long> authId = tokenManager.getIdFromToken(token);
+          if (authId.isEmpty())
+              throw new UserManagerException(EErrorType.INVALID_TOKEN);
+
+         Optional<Leave> leave =  leaveService.findById(leaveId);
+         if (leave.isEmpty() ){
+             throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
+         }
+         if(!(leave.get().getCompanyManagerId()== authId.get()))
+             throw new UserManagerException(EErrorType.UNAUTHORIZED_REQUEST);
+
+         if(onay.equals("onaylandi")) {
+             leave.get().setELeaveApprovalStatus(ELeaveApprovalStatus.APPROVED);
+             leave.get().setResponseDate(LocalDate.now());
+             leaveService.update(leave.get());
+             return true;
+         }else{
+             leave.get().setELeaveApprovalStatus(ELeaveApprovalStatus.REJECTED);
+             leave.get().setResponseDate(LocalDate.now());
+             leaveService.update(leave.get());
+             return false;
+          }
+
+      }
+
 
 
 }

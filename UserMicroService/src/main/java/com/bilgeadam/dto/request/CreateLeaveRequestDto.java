@@ -23,5 +23,5 @@ public class CreateLeaveRequestDto {
     private LocalDate demandDate;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String email;
+
 }
