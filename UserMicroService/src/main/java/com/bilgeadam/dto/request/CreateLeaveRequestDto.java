@@ -1,13 +1,10 @@
 package com.bilgeadam.dto.request;
 
-import com.bilgeadam.repository.enums.ELeaveApprovalStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 

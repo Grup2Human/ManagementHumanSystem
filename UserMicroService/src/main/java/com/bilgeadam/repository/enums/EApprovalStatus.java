@@ -1,5 +1,5 @@
 package com.bilgeadam.repository.enums;
 
-public enum ELeaveApprovalStatus {
+public enum EApprovalStatus {
     PENDINGAPPROVAL, APPROVED, REJECTED
 }

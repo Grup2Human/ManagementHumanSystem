@@ -35,4 +35,5 @@ public class Personnel extends Person{
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private EStatus status=EStatus.PENDING;
+    private Double salary;
 }

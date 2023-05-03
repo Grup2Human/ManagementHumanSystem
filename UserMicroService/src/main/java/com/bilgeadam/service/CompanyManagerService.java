@@ -2,7 +2,7 @@ package com.bilgeadam.service;
 
 import com.bilgeadam.dto.request.*;
 import com.bilgeadam.dto.response.CompanyManagerSummaryResponseDto;
-import com.bilgeadam.dto.response.DemandsResponseDto;
+import com.bilgeadam.dto.response.LeaveDemandsResponseDto;
 import com.bilgeadam.dto.response.PersonnelSummaryResponseDto;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
@@ -16,13 +16,9 @@ import com.bilgeadam.rabbitmq.producer.CreatePersonProducer;
 import com.bilgeadam.rabbitmq.producer.PasswordMailProducer;
 import com.bilgeadam.repository.ICompanyManagerRepository;
 import com.bilgeadam.repository.ICompanyRepository;
-import com.bilgeadam.repository.ILeaveRepository;
 import com.bilgeadam.repository.IPersonnelRepository;
-import com.bilgeadam.repository.entity.Company;
-import com.bilgeadam.repository.entity.CompanyManager;
-import com.bilgeadam.repository.entity.Leave;
-import com.bilgeadam.repository.entity.Personnel;
-import com.bilgeadam.repository.enums.ELeaveApprovalStatus;
+import com.bilgeadam.repository.entity.*;
+import com.bilgeadam.repository.enums.EApprovalStatus;
 import com.bilgeadam.repository.enums.ERole;
 import com.bilgeadam.utility.CodeGenerator;
 import com.bilgeadam.utility.JwtTokenManager;
@@ -47,10 +43,12 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
     private final CreatePersonProducer createPersonProducer;
     private final PasswordMailProducer passwordMailProducer;
     private final LeaveService leaveService;
+    private final AdvanceService advanceService;
+    private final ExpenseService expenseService;
 
 
 
-    public CompanyManagerService(ICompanyManagerRepository companyManagerRepository, JwtTokenManager tokenManager, ICompanyRepository companyRepository, CompanyService companyService, IPersonnelRepository personnelRepository, PersonnelService personnelService, CreatePersonProducer createPersonProducer, PasswordMailProducer passwordMailProducer, LeaveService leaveService) {
+    public CompanyManagerService(ICompanyManagerRepository companyManagerRepository, JwtTokenManager tokenManager, ICompanyRepository companyRepository, CompanyService companyService, IPersonnelRepository personnelRepository, PersonnelService personnelService, CreatePersonProducer createPersonProducer, PasswordMailProducer passwordMailProducer, LeaveService leaveService, AdvanceService advanceService, ExpenseService expenseService) {
         super(companyManagerRepository);
         this.companyManagerRepository = companyManagerRepository;
         this.tokenManager = tokenManager;
@@ -61,6 +59,8 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         this.createPersonProducer = createPersonProducer;
         this.passwordMailProducer = passwordMailProducer;
         this.leaveService = leaveService;
+        this.advanceService = advanceService;
+        this.expenseService = expenseService;
     }
 
     public Boolean updateCompanyManager(UpdateCompanyManagerRequestDto dto, Long id) {
@@ -248,6 +248,7 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
                     .build();
 
             Personnel personnel = personnelService.save(IPersonnelMapper.INSTANCE.toPersonnel(model));
+            personnel.setSalary(dto.getSalary());
             personnelService.save(personnel);
             createPersonProducer.sendNewPerson(model);
             passwordMailProducer.sendPassword(mailModel);
@@ -257,7 +258,7 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         }
     }
 
-    public List<DemandsResponseDto> findAllLeaveRequests(String token) {
+    public List<LeaveDemandsResponseDto> findAllLeaveRequests(String token) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         System.out.println(authId.get());
         if (authId.isEmpty())
@@ -266,14 +267,14 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         if (leavelist.size() == 0)
             throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
         //---------------Buraya filtreleme eklemeliyiz
-        List<DemandsResponseDto> demandsResponseDtoList = new ArrayList<>();
+        List<LeaveDemandsResponseDto> leaveDemandsResponseDtoList = new ArrayList<>();
         leavelist.stream()
-                .filter(a -> a.getCompanyManagerId() == authId.get() && a.getELeaveApprovalStatus().equals(ELeaveApprovalStatus.PENDINGAPPROVAL))
+                .filter(a -> a.getCompanyManagerId() == authId.get() && a.getEApprovalStatus().equals(EApprovalStatus.PENDINGAPPROVAL))
                 .sorted(Comparator.comparingLong(Leave::getCreateat)) // sort by descending createat
                 .forEach(x -> {
-                    demandsResponseDtoList.add(ILeaveMapper.INSTANCE.todemandsResponseDto(x));
+                    leaveDemandsResponseDtoList.add(ILeaveMapper.INSTANCE.todemandsResponseDto(x));
                 });
-        return demandsResponseDtoList;
+        return leaveDemandsResponseDtoList;
     }
 
       public Boolean createAuthId(AddAuthIdModel model) {
@@ -287,6 +288,25 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
 
         return true;
       }
+
+    public List<Advance> findAllAdvanceRequests(String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        System.out.println(authId.get());
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        List<Advance> advancelist = advanceService.findAll();
+        if (advancelist.size() == 0)
+            throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
+        //---------------Buraya filtreleme eklemeliyiz
+        List<Advance> advanceList2 = new ArrayList<>();
+        advancelist.stream()
+                .filter(a -> a.getCompanyManagerId() == authId.get() && a.getEApprovalStatus().equals(EApprovalStatus.PENDINGAPPROVAL))
+                .sorted(Comparator.comparingLong(Advance::getCreateat)) // sort by descending createat
+                .forEach(x -> {
+                    advanceList2.add(x);
+                });
+        return advanceList2;
+    }
       public Boolean leaveApproval(String token,Long leaveId,String onay){
           Optional<Long> authId = tokenManager.getIdFromToken(token);
           if (authId.isEmpty())
@@ -300,18 +320,83 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
              throw new UserManagerException(EErrorType.UNAUTHORIZED_REQUEST);
 
          if(onay.equals("onaylandi")) {
-             leave.get().setELeaveApprovalStatus(ELeaveApprovalStatus.APPROVED);
+             leave.get().setEApprovalStatus(EApprovalStatus.APPROVED);
              leave.get().setResponseDate(LocalDate.now());
              leaveService.update(leave.get());
              return true;
          }else{
-             leave.get().setELeaveApprovalStatus(ELeaveApprovalStatus.REJECTED);
+             leave.get().setEApprovalStatus(EApprovalStatus.REJECTED);
              leave.get().setResponseDate(LocalDate.now());
              leaveService.update(leave.get());
              return false;
           }
 
       }
+    public Boolean advanceApproval(String token,Long advanceId,String onay) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        Optional<Advance> advance = advanceService.findById(advanceId);
+        if (advance.isEmpty()) {
+            throw new UserManagerException(EErrorType.ADVANCE_NOT_FOUND);
+        }
+        if (!(advance.get().getCompanyManagerId() == authId.get()))
+            throw new UserManagerException(EErrorType.UNAUTHORIZED_REQUEST);
+
+        if (onay.equals("onaylandi")) {
+            advance.get().setEApprovalStatus(EApprovalStatus.APPROVED);
+            advance.get().setResponseDate(LocalDate.now());
+            advanceService.update(advance.get());
+            return true;
+        } else {
+            advance.get().setEApprovalStatus(EApprovalStatus.REJECTED);
+            advance.get().setResponseDate(LocalDate.now());
+            advanceService.update(advance.get());
+            return false;
+        }
+    }
+        public List<Expense> findAllExpenseRequests (String token) {
+            Optional<Long> authId = tokenManager.getIdFromToken(token);
+            System.out.println(authId.get());
+            if (authId.isEmpty())
+                throw new UserManagerException(EErrorType.INVALID_TOKEN);
+            List<Expense> expenselist = expenseService.findAll();
+            if (expenselist.size() == 0)
+                throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
+            //---------------Buraya filtreleme eklemeliyiz
+            List<Expense> expenseList2 = new ArrayList<>();
+            expenselist.stream()
+                    .filter(a -> a.getCompanyManagerId() == authId.get() && a.getEApprovalStatus().equals(EApprovalStatus.PENDINGAPPROVAL))
+                    .sorted(Comparator.comparingLong(Expense::getCreateat)) // sort by descending createat
+                    .forEach(x -> {
+                        expenseList2.add(x);
+                    });
+            return expenseList2;
+        }
+    public Boolean expenseApproval(String token,Long expenseId,String onay) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        Optional<Expense> expense = expenseService.findById(expenseId);
+        if (expense.isEmpty()) {
+            throw new UserManagerException(EErrorType.EXPENSE_NOT_FOUND);
+        }
+        if (!(expense.get().getCompanyManagerId() == authId.get()))
+            throw new UserManagerException(EErrorType.UNAUTHORIZED_REQUEST);
+
+        if (onay.equals("onaylandi")) {
+            expense.get().setEApprovalStatus(EApprovalStatus.APPROVED);
+            expense.get().setResponseDate(LocalDate.now());
+            expenseService.update(expense.get());
+            return true;
+        } else {
+            expense.get().setEApprovalStatus(EApprovalStatus.REJECTED);
+            expense.get().setResponseDate(LocalDate.now());
+            expenseService.update(expense.get());
+            return false;
+        }
+    }
+        
 
 
 

@@ -1,9 +1,10 @@
 package com.bilgeadam.controller;
 
+import com.bilgeadam.dto.request.CreateAdvanceRequestDto;
+import com.bilgeadam.dto.request.CreateExpenseRequestDto;
 import com.bilgeadam.dto.request.CreateLeaveRequestDto;
-import com.bilgeadam.dto.request.UpdateCompanyManagerRequestDto;
-import com.bilgeadam.dto.response.DemandsResponseDto;
-import com.bilgeadam.dto.response.PersonnelSummaryResponseDto;
+import com.bilgeadam.repository.entity.Advance;
+import com.bilgeadam.repository.entity.Expense;
 import com.bilgeadam.repository.entity.Leave;
 import com.bilgeadam.service.PersonnelService;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +28,29 @@ public class PersonnelController {
     public ResponseEntity<Boolean> createLeaveRequest(@RequestBody CreateLeaveRequestDto dto, String token) {
         return ResponseEntity.ok(personnelService.createLeaveRequest(dto, token));
     }
-//    @PostMapping(FINDALLLEAVEREQUEST)
-//    public ResponseEntity<List<DemandsResponseDto>> findAllLeaveRequests(String token) {
-//        return ResponseEntity.ok(personnelService.findAllLeaveRequests(token));
-//    }
 
     @PostMapping(FINDALLLEAVEREQUEST)
     public ResponseEntity<List<Leave>> findAllLeaveRequests(String token) {
-        return ResponseEntity.ok(personnelService.findAllLeaveRequests2(token));
+        return ResponseEntity.ok(personnelService.findAllLeaveRequests(token));
     }
+    @PostMapping(CREATEADVANCEREQUEST)
+    public ResponseEntity<Boolean> createAdvanceRequest(@RequestBody CreateAdvanceRequestDto dto, String token) {
+        return ResponseEntity.ok(personnelService.createAdvanceRequest(dto, token));
+    }
+    @PostMapping(FINDALLADVANCEREQUEST)
+    public ResponseEntity<List<Advance>> findAllAdvanceRequests(String token) {
+        return ResponseEntity.ok(personnelService.findAllAdvanceRequests(token));
+    }
+    @PostMapping(CREATEEXPENSEREQUEST)
+    public ResponseEntity<Boolean> createExpenseRequest(@RequestBody CreateExpenseRequestDto dto, String token) {
+        return ResponseEntity.ok(personnelService.createExpenseRequest(dto, token));
+    }
+    @PostMapping(FINDALLEXPENSEREQUEST)
+    public ResponseEntity<List<Expense>> findAllExpenseRequests(String token) {
+        return ResponseEntity.ok(personnelService.findAllExpenseRequests(token));
+    }
+//    @PostMapping(CREATEADVANCEREQUEST)
+//    public ResponseEntity<Boolean> createExpenseRequest(@RequestBody CreateExpenseRequestDto dto, String token) {
+//        return ResponseEntity.ok(personnelService.createExpenseRequest(dto, token));
+//    }
 }

@@ -2,11 +2,11 @@ package com.bilgeadam.controller;
 
 import com.bilgeadam.dto.request.*;
 import com.bilgeadam.dto.response.CompanyManagerSummaryResponseDto;
-import com.bilgeadam.dto.response.DemandsResponseDto;
+import com.bilgeadam.dto.response.LeaveDemandsResponseDto;
 import com.bilgeadam.dto.response.PersonnelSummaryResponseDto;
-import com.bilgeadam.rabbitmq.model.CreatePersonModel;
-import com.bilgeadam.repository.entity.Company;
+import com.bilgeadam.repository.entity.Advance;
 import com.bilgeadam.repository.entity.CompanyManager;
+import com.bilgeadam.repository.entity.Expense;
 import com.bilgeadam.repository.entity.Personnel;
 import com.bilgeadam.service.CompanyManagerService;
 import lombok.RequiredArgsConstructor;
@@ -68,11 +68,27 @@ public class CompanyManagerController {
         return ResponseEntity.ok(companyManagerService.createPersonnel(dto));
     }
     @GetMapping(GETALLPERSONNELLEAVEREQUESTS)
-    public ResponseEntity<List<DemandsResponseDto>> findAllLeaveRequests (String token) {
+    public ResponseEntity<List<LeaveDemandsResponseDto>> findAllLeaveRequests (String token) {
         return ResponseEntity.ok(companyManagerService.findAllLeaveRequests(token));
     }
     @PutMapping(PERSONNELLEAVEAPPROVAL)
     public ResponseEntity<Boolean> leaveApproval(String token,Long leaveId,String onay) {
         return ResponseEntity.ok(companyManagerService.leaveApproval(token,leaveId,onay));
+    }
+    @GetMapping(GETALLPERSONNELADVANCEREQUESTS)
+    public ResponseEntity<List<Advance>> findAllAdvanceRequests (String token) {
+        return ResponseEntity.ok(companyManagerService.findAllAdvanceRequests(token));
+    }
+    @PutMapping(PERSONNELADVANCEAPPROVAL)
+    public ResponseEntity<Boolean> advanceApproval(String token,Long advanceId,String onay) {
+        return ResponseEntity.ok(companyManagerService.advanceApproval(token,advanceId,onay));
+    }
+    @GetMapping(GETALLPERSONNELEXPENSEREQUESTS)
+    public ResponseEntity<List<Expense>> findAllExpenseRequests (String token) {
+        return ResponseEntity.ok(companyManagerService.findAllExpenseRequests(token));
+    }
+    @PutMapping(PERSONNELEXPENSEAPPROVAL)
+    public ResponseEntity<Boolean> expenseApproval(String token,Long expenseId,String onay) {
+        return ResponseEntity.ok(companyManagerService.expenseApproval(token,expenseId,onay));
     }
 }

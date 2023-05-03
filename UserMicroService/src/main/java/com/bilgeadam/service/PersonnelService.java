@@ -1,17 +1,21 @@
 package com.bilgeadam.service;
 
+import com.bilgeadam.dto.request.CreateAdvanceRequestDto;
+import com.bilgeadam.dto.request.CreateExpenseRequestDto;
 import com.bilgeadam.dto.request.CreateLeaveRequestDto;
 import com.bilgeadam.dto.request.UpdatePersonnelRequestDto;
-import com.bilgeadam.dto.response.DemandsResponseDto;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
+import com.bilgeadam.mapper.IAdvanceMapper;
+import com.bilgeadam.mapper.IExpenseMapper;
 import com.bilgeadam.mapper.ILeaveMapper;
 import com.bilgeadam.rabbitmq.model.AddAuthIdModel;
 import com.bilgeadam.repository.IPersonnelRepository;
-import com.bilgeadam.repository.entity.CompanyManager;
+import com.bilgeadam.repository.entity.Advance;
+import com.bilgeadam.repository.entity.Expense;
 import com.bilgeadam.repository.entity.Leave;
 import com.bilgeadam.repository.entity.Personnel;
-import com.bilgeadam.repository.enums.ELeaveApprovalStatus;
+import com.bilgeadam.repository.enums.EApprovalStatus;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
 import org.springframework.stereotype.Service;
@@ -25,12 +29,16 @@ public class PersonnelService extends ServiceManager<Personnel,Long> {
     private final IPersonnelRepository iPersonnelRepository;
     private final JwtTokenManager tokenManager;
     private final LeaveService leaveService;
+    private final AdvanceService advanceService;
+    private final ExpenseService expenseService;
 
-    public PersonnelService(IPersonnelRepository iPersonnelRepository, JwtTokenManager tokenManager, LeaveService leaveService) {
+    public PersonnelService(IPersonnelRepository iPersonnelRepository, JwtTokenManager tokenManager, LeaveService leaveService, AdvanceService advanceService, ExpenseService expenseService) {
         super(iPersonnelRepository);
         this.iPersonnelRepository = iPersonnelRepository;
         this.tokenManager = tokenManager;
         this.leaveService = leaveService;
+        this.advanceService = advanceService;
+        this.expenseService = expenseService;
     }
 
     public Boolean updatePersonnel(UpdatePersonnelRequestDto dto) {
@@ -76,25 +84,38 @@ public class PersonnelService extends ServiceManager<Personnel,Long> {
         leaveService.save(leave);
         return true;
     }
+    public Boolean createAdvanceRequest(CreateAdvanceRequestDto dto, String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty()) {
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        }
+        Optional<Personnel> personnel = iPersonnelRepository.findOptionalByAuthId(authId.get());
+        if (personnel.isEmpty()) {
+            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+        }
+        if (dto.getAdvanceAmount()>(personnel.get().getSalary()*3))
+            throw new UserManagerException(EErrorType.INVALID_ADVANCE_AMOUNT);
+        Advance advance = IAdvanceMapper.INSTANCE.toAdvance(dto);
+        advance.setPersonnelId(personnel.get().getId());
+        advanceService.save(advance);
+        return true;
+    }
+    public Boolean createExpenseRequest(CreateExpenseRequestDto dto, String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        if (authId.isEmpty()) {
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        }
+        Optional<Personnel> personnel = iPersonnelRepository.findOptionalByAuthId(authId.get());
+        if (personnel.isEmpty()) {
+            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+        }
+        Expense expense = IExpenseMapper.INSTANCE.toExpense(dto);
+        expense.setPersonnelId(personnel.get().getId());
+        expenseService.save(expense);
+        return true;
+    }
 
-//    public Personnel findByIdWithToken(String token, Long id) {
-//        Optional<Long> authId = tokenManager.getIdFromToken(token);
-//        if (authId.isEmpty())
-//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
-//        Optional<Personnel> personnel = iPersonnelRepository.findOptionalByAuthId(id);
-//        if (personnel.isEmpty())
-//            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
-//        return personnel.get();
-//    }
-//
-//    public List<PersonnelSummaryResponseDto> findAllSummary() {
-//        List<Personnel> personnelList = findAll();
-//        List<PersonnelSummaryResponseDto> PersonnelSummaryResponseDtoList = new ArrayList<>();
-//        personnelList.forEach(x-> {
-//            PersonnelSummaryResponseDtoList.add(IPersonnelMapper.INSTANCE.toPersonnelProfileSummaryResponse(x));
-//        });
-//        return PersonnelSummaryResponseDtoList;
-//    }
+
     public Boolean createAuthId(AddAuthIdModel model) {
         System.err.println(model.getAuthId());
         Optional<Personnel> personnel = iPersonnelRepository.findOptionalByEmail(model.getEmail());
@@ -104,30 +125,9 @@ public class PersonnelService extends ServiceManager<Personnel,Long> {
         update(personnel.get());
         return true;
     }
-//    public List<DemandsResponseDto> findAllLeaveRequests (String token) {
-//        Optional<Long> authId = tokenManager.getIdFromToken(token);
-//        System.out.println(authId.get());
-//        if (authId.isEmpty())
-//            throw new UserManagerException(EErrorType.INVALID_TOKEN);
-//        List<Leave> leavelist = leaveService.findAll();
-//        if (leavelist.size()==0)
-//            throw new UserManagerException(EErrorType.LEAVE_NOT_FOUND);
-//        //---------------Buraya filtreleme eklemeliyiz
-//        List<DemandsResponseDto> demandsResponseDtoList = new ArrayList<>();
-//        Optional<Personnel> personnel= iPersonnelRepository.findOptionalByAuthId(authId.get());
-//
-//        if(personnel.isEmpty())
-//            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
-//
-//        leavelist.stream()
-//                .filter(a-> a.getPersonnelId()==personnel.get().getId())
-//                .forEach(x -> {
-//                    demandsResponseDtoList.add(ILeaveMapper.INSTANCE.todemandsResponseDto(x));
-//                });
-//        return demandsResponseDtoList;
-//    }
 
-    public List<Leave> findAllLeaveRequests2 (String token) {
+
+    public List<Leave> findAllLeaveRequests (String token) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
         System.out.println(authId.get());
         if (authId.isEmpty())
@@ -145,7 +145,7 @@ public class PersonnelService extends ServiceManager<Personnel,Long> {
         leavelist.stream()
                 .filter(a-> a.getPersonnelId()==personnel.get().getId())
                 .sorted(Comparator.comparing(
-                        (Leave a) -> a.getELeaveApprovalStatus() == ELeaveApprovalStatus.PENDINGAPPROVAL ? 0 : 1).reversed()
+                        (Leave a) -> a.getEApprovalStatus() == EApprovalStatus.PENDINGAPPROVAL ? 0 : 1).reversed()
                         // sort by status, with PENDING first
                 .thenComparingLong(Leave::getCreateat).reversed())// then sort by descending createat
                 //.sorted(Comparator.comparingLong(Leave::getCreateat).reversed())
@@ -153,5 +153,59 @@ public class PersonnelService extends ServiceManager<Personnel,Long> {
                     leaveList2.add(x);
                 });
         return leaveList2;
+    }
+    public List<Advance> findAllAdvanceRequests (String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        System.out.println(authId.get());
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        List<Advance> advancelist = advanceService.findAll();
+        if (advancelist.size()==0)
+            throw new UserManagerException(EErrorType.ADVANCE_NOT_FOUND);
+        //---------------Buraya filtreleme eklemeliyiz
+        List<Advance> advanceList2 = new ArrayList<>();
+        Optional<Personnel> personnel= iPersonnelRepository.findOptionalByAuthId(authId.get());
+
+        if(personnel.isEmpty())
+            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+
+        advancelist.stream()
+                .filter(a-> a.getPersonnelId()==personnel.get().getId())
+                .sorted(Comparator.comparing(
+                                (Advance a) -> a.getEApprovalStatus() == EApprovalStatus.PENDINGAPPROVAL ? 0 : 1).reversed()
+                        // sort by status, with PENDING first
+                        .thenComparingLong(Advance::getCreateat).reversed())// then sort by descending createat
+                //.sorted(Comparator.comparingLong(Advance::getCreateat).reversed())
+                .forEach(x -> {
+                    advanceList2.add(x);
+                });
+        return advanceList2;
+    }
+    public List<Expense> findAllExpenseRequests (String token) {
+        Optional<Long> authId = tokenManager.getIdFromToken(token);
+        System.out.println(authId.get());
+        if (authId.isEmpty())
+            throw new UserManagerException(EErrorType.INVALID_TOKEN);
+        List<Expense> expenselist = expenseService.findAll();
+        if (expenselist.size()==0)
+            throw new UserManagerException(EErrorType.EXPENSE_NOT_FOUND);
+        //---------------Buraya filtreleme eklemeliyiz
+        List<Expense> expenseList2 = new ArrayList<>();
+        Optional<Personnel> personnel= iPersonnelRepository.findOptionalByAuthId(authId.get());
+
+        if(personnel.isEmpty())
+            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
+
+        expenselist.stream()
+                .filter(a-> a.getPersonnelId()==personnel.get().getId())
+                .sorted(Comparator.comparing(
+                                (Expense a) -> a.getEApprovalStatus() == EApprovalStatus.PENDINGAPPROVAL ? 0 : 1).reversed()
+                        // sort by status, with PENDING first
+                        .thenComparingLong(Expense::getCreateat).reversed())// then sort by descending createat
+                //.sorted(Comparator.comparingLong(Expense::getCreateat).reversed())
+                .forEach(x -> {
+                    expenseList2.add(x);
+                });
+        return expenseList2;
     }
 }

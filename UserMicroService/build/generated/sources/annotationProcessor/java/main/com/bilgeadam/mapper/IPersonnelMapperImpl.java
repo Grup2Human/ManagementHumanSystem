@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-05-03T15:25:31+0300",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.6 (Amazon.com Inc.)"
+    date = "2023-05-03T19:34:45+0300",
+    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.5 (Amazon.com Inc.)"
 )
 @Component
 public class IPersonnelMapperImpl implements IPersonnelMapper {
@@ -38,6 +38,7 @@ public class IPersonnelMapperImpl implements IPersonnelMapper {
         Personnel.PersonnelBuilder<?, ?> personnel = Personnel.builder();
 
         personnel.email( dto.getEmail() );
+        personnel.salary( dto.getSalary() );
 
         return personnel.build();
     }
