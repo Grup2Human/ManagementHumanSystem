@@ -1,6 +1,6 @@
 package com.bilgeadam.repository.entity;
 
-import com.bilgeadam.repository.enums.ELeaveApprovalStatus;
+import com.bilgeadam.repository.enums.EApprovalStatus;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -27,7 +27,7 @@ public class Leave extends BaseEntity {
     private Long duration;
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private ELeaveApprovalStatus eLeaveApprovalStatus = ELeaveApprovalStatus.PENDINGAPPROVAL;
+    private EApprovalStatus eApprovalStatus = EApprovalStatus.PENDINGAPPROVAL;
     private LocalDate responseDate;
 
 

@@ -1,6 +1,6 @@
 package com.bilgeadam.repository.entity;
 
-import com.bilgeadam.repository.enums.ELeaveApprovalStatus;
+import com.bilgeadam.repository.enums.EApprovalStatus;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @ToString // sınıf için toString methodunu tanımlar
 @Entity
 @Table(name = "tblexpense")
-public class Expense {
+public class Expense extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +25,7 @@ public class Expense {
     private String currency;
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private ELeaveApprovalStatus eLeaveApprovalStatus = ELeaveApprovalStatus.PENDINGAPPROVAL;
+    private EApprovalStatus eApprovalStatus = EApprovalStatus.PENDINGAPPROVAL;
     private LocalDate demandDate;
     private LocalDate responseDate;
     private String document;

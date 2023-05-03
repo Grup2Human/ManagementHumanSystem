@@ -1,6 +1,6 @@
 package com.bilgeadam.dto.response;
 
-import com.bilgeadam.repository.enums.ELeaveApprovalStatus;
+import com.bilgeadam.repository.enums.EApprovalStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +13,13 @@ import javax.persistence.Enumerated;
 @Data // Data,get, set methodlarını tanımlar
 @NoArgsConstructor // Parametresiz constructor tanımlar
 @AllArgsConstructor // 1....n kadar olan tüm parametreli constructorları tanımlar
-public class DemandsResponseDto {
+public class LeaveDemandsResponseDto {
     private Long personnelId;
     private Long leaveId;
     //private Long companyManagerId;
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private ELeaveApprovalStatus eLeaveApprovalStatus = ELeaveApprovalStatus.PENDINGAPPROVAL;
+    private EApprovalStatus eApprovalStatus = EApprovalStatus.PENDINGAPPROVAL;
     private String name;
     private String surname;
 }

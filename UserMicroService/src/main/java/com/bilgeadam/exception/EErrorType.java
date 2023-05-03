@@ -27,7 +27,9 @@ public enum EErrorType {
     COMPANY_MANAGER_NOT_CREATED(4218,"Yonetici olusturulamadi",HttpStatus.BAD_REQUEST),
     TUR_NOT_FOUND(4219,"Tur seciminiz hatali",HttpStatus.BAD_REQUEST),
     LEAVE_NOT_FOUND(4220,"İzin isteği bulunmamaktadır",HttpStatus.NOT_FOUND),
-    UNAUTHORIZED_REQUEST(4220,"Yetkisiz izin isteği",HttpStatus.BAD_REQUEST),
+    ADVANCE_NOT_FOUND(4221,"Avans isteği bulunmamaktadır",HttpStatus.NOT_FOUND),
+    EXPENSE_NOT_FOUND(4222,"Harcama isteği bulunmamaktadır",HttpStatus.NOT_FOUND),
+    UNAUTHORIZED_REQUEST(4223,"Yetkisiz izin isteği",HttpStatus.BAD_REQUEST),
     MUSTERI_BULUNAMADI(1003,"Aradığınız müşteri sistemde kayıtlı değildir.", INTERNAL_SERVER_ERROR),
     REGISTER_ERROR_PASSWORD_UNMATCH(1004, "Girilen parolalar uyuşmamaktadır",HttpStatus.BAD_REQUEST),
     REGISTER_ERROR_USERNAME(1005,"Bu kullanıcı adı daha önce alınmıştır",HttpStatus.BAD_REQUEST),
@@ -35,7 +37,10 @@ public enum EErrorType {
     URUN_EKLEME(2001,"Ürün ekleme başarısız oldu", INTERNAL_SERVER_ERROR),
     METHOD_MIS_MATCH_ERROR(2002,"Giriş yaptığınız değer, istenilen değerle uyuşmamaktadır",HttpStatus.BAD_REQUEST),
     METHOD_NOT_VALID_ARGUMENT_ERROR(2003,"URL içinde eksik parametre gönderimi",HttpStatus.BAD_REQUEST),
-    INVALID_PARAMETER(3001,"Geçersiz parametre girişi yaptınız", HttpStatus.BAD_REQUEST);
+    INVALID_PARAMETER(3001,"Geçersiz parametre girişi yaptınız", HttpStatus.BAD_REQUEST),
+    INVALID_ADVANCE_AMOUNT(3002,"Talep edilen tutar maaşın 3 katını geçemez!", HttpStatus.BAD_REQUEST);
+
+
 
     ;
 

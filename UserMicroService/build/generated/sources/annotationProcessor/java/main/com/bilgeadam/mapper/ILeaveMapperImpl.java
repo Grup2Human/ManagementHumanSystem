@@ -1,15 +1,15 @@
 package com.bilgeadam.mapper;
 
 import com.bilgeadam.dto.request.CreateLeaveRequestDto;
-import com.bilgeadam.dto.response.DemandsResponseDto;
+import com.bilgeadam.dto.response.LeaveDemandsResponseDto;
 import com.bilgeadam.repository.entity.Leave;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-05-03T15:25:31+0300",
-    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.6 (Amazon.com Inc.)"
+    date = "2023-05-03T19:30:44+0300",
+    comments = "version: 1.5.3.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-7.5.1.jar, environment: Java 17.0.5 (Amazon.com Inc.)"
 )
 @Component
 public class ILeaveMapperImpl implements ILeaveMapper {
@@ -32,16 +32,16 @@ public class ILeaveMapperImpl implements ILeaveMapper {
     }
 
     @Override
-    public DemandsResponseDto todemandsResponseDto(Leave leave) {
+    public LeaveDemandsResponseDto todemandsResponseDto(Leave leave) {
         if ( leave == null ) {
             return null;
         }
 
-        DemandsResponseDto.DemandsResponseDtoBuilder demandsResponseDto = DemandsResponseDto.builder();
+        LeaveDemandsResponseDto.LeaveDemandsResponseDtoBuilder leaveDemandsResponseDto = LeaveDemandsResponseDto.builder();
 
-        demandsResponseDto.leaveId( leave.getId() );
-        demandsResponseDto.personnelId( leave.getPersonnelId() );
+        leaveDemandsResponseDto.leaveId( leave.getId() );
+        leaveDemandsResponseDto.personnelId( leave.getPersonnelId() );
 
-        return demandsResponseDto.build();
+        return leaveDemandsResponseDto.build();
     }
 }
