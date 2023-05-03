@@ -1,7 +1,9 @@
 package com.bilgeadam.rabbitmq.consumer;
 
+import com.bilgeadam.rabbitmq.model.AddAuthIdModel;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.repository.entity.CompanyManager;
+import com.bilgeadam.repository.enums.ERole;
 import com.bilgeadam.service.AdminService;
 import com.bilgeadam.service.CompanyManagerService;
 import com.bilgeadam.service.PersonnelService;
@@ -17,9 +19,16 @@ public class AuthIdConsumer {
     private final PersonnelService personnelService;
     private final CompanyManagerService companyManagerService;
 
-    @RabbitListener(queues = ("${rabbitmq.queueRegister}"))
-    public void newUserCreate(RegisterModel model){
+    @RabbitListener(queues = ("${rabbitmq.authidqueue}"))
+    public void newAuthId (AddAuthIdModel model){
+        System.out.println("*-*-*-*-*-*-*-*-*-*-*-");
         log.info("User {}",model.toString());
+        if (model.getERole().equals(ERole.COMPANYMANAGER))
+            companyManagerService.createAuthId(model);
+        else if (model.getERole().equals(ERole.PERSONNEL)) {
+            personnelService.createAuthId(model);
+        }
+        //////
         //personnelService.createAdmin(model);
         //userProfileService.createUser(IUserMapper.INSTANCE.toNewCreateUserRequestDto(model)); 2. tercih
     }

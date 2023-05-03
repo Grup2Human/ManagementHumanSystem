@@ -20,6 +20,11 @@ public class RabbitConfig {
     private String changeStatusBindingKey;
     @Value("${rabbitmq.changestatusqueue}")
     private String changeStatusQueue;
+    @Value("${rabbitmq.authidbindingkey}")
+    private String authIdBindingKey;
+    @Value("${rabbitmq.authidqueue}")
+    private String authIdQueue;
+
     @Bean
     DirectExchange exchange() {
         return new DirectExchange(exchange);
@@ -53,4 +58,12 @@ public class RabbitConfig {
         return new Queue(queueCreatePerson);
     }
 
+    @Bean
+    Queue authIdQueue() {
+        return new Queue(authIdQueue);
+    } //Auth Göndermek için Queue Gönderiyoruz
+    @Bean
+    public Binding bindingSendAuthId(final Queue authIdQueue, final DirectExchange exchangeAuth) {
+        return BindingBuilder.bind(authIdQueue).to(exchangeAuth).with(authIdBindingKey);
+    }
 }
