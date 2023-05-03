@@ -97,8 +97,8 @@ public class PersonnelService extends ServiceManager<Personnel,Long> {
     public Boolean createAuthId(AddAuthIdModel model) {
         System.err.println(model.getAuthId());
         Optional<Personnel> personnel = iPersonnelRepository.findOptionalByEmail(model.getEmail());
-        if(personnel.isPresent())
-        throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+        if(!personnel.isPresent())
+            throw new UserManagerException(EErrorType.USER_NOT_FOUND);
         personnel.get().setAuthId(model.getAuthId());
         update(personnel.get());
         return true;
