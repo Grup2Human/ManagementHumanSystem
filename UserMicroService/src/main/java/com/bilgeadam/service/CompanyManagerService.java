@@ -290,7 +290,7 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
 //    }
       public Boolean createAuthId(AddAuthIdModel model) {
           System.out.println(model.getAuthId());
-          System.out.println("--------------------------");
+          System.out.println("---------------------------");
           Optional<CompanyManager> companyManager = companyManagerRepository.findOptionalByEmail(model.getEmail());
           if(companyManager.isEmpty())
               throw new UserManagerException(EErrorType.USER_NOT_FOUND);
