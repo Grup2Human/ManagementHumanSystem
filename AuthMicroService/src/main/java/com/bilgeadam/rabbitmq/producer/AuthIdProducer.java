@@ -1,5 +1,6 @@
 package com.bilgeadam.rabbitmq.producer;
 
+import com.bilgeadam.rabbitmq.model.AddAuthIdModel;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -15,7 +16,7 @@ public class AuthIdProducer {
     private String authIdBindingKey;
 
     private final RabbitTemplate rabbitTemplate;
-    public void sendNewUser(RegisterModel model) {
+    public void sendAuthId(AddAuthIdModel model) {
         rabbitTemplate.convertAndSend(directExchange,authIdBindingKey,model);
     }
 }

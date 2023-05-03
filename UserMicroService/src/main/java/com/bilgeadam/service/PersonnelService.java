@@ -5,7 +5,9 @@ import com.bilgeadam.dto.request.UpdatePersonnelRequestDto;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.exception.UserManagerException;
 import com.bilgeadam.mapper.ILeaveMapper;
+import com.bilgeadam.rabbitmq.model.AddAuthIdModel;
 import com.bilgeadam.repository.IPersonnelRepository;
+import com.bilgeadam.repository.entity.CompanyManager;
 import com.bilgeadam.repository.entity.Leave;
 import com.bilgeadam.repository.entity.Personnel;
 import com.bilgeadam.utility.JwtTokenManager;
@@ -92,4 +94,13 @@ public class PersonnelService extends ServiceManager<Personnel,Long> {
 //        });
 //        return PersonnelSummaryResponseDtoList;
 //    }
+    public Boolean createAuthId(AddAuthIdModel model) {
+        System.err.println(model.getAuthId());
+        Optional<Personnel> personnel = iPersonnelRepository.findOptionalByEmail(model.getEmail());
+        if(personnel.isPresent())
+        throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+        personnel.get().setAuthId(model.getAuthId());
+        update(personnel.get());
+        return true;
+    }
 }

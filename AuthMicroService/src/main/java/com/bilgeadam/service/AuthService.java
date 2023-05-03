@@ -7,21 +7,20 @@ import com.bilgeadam.dto.response.AuthRegisterResponseDto;
 import com.bilgeadam.exception.AuthServiceException;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.mapper.IAuthMapper;
+import com.bilgeadam.rabbitmq.model.AddAuthIdModel;
 import com.bilgeadam.rabbitmq.model.CreatePersonModel;
-import com.bilgeadam.rabbitmq.model.RegisterModel;
+import com.bilgeadam.rabbitmq.producer.AuthIdProducer;
 import com.bilgeadam.rabbitmq.producer.ChangeStatusProducer;
 import com.bilgeadam.rabbitmq.producer.RegisterProducer;
 import com.bilgeadam.repository.IAuthRepository;
 import com.bilgeadam.repository.entity.Auth;
 import com.bilgeadam.repository.enums.ERole;
-import com.bilgeadam.utility.CodeGenerator;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.message.AuthException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static com.bilgeadam.repository.enums.EStatus.ACTIVE;
@@ -32,15 +31,17 @@ public class AuthService extends ServiceManager<Auth,Long> {
     private final JwtTokenManager tokenManager;
     private final RegisterProducer registerProducer;
     private final ChangeStatusProducer changeStatusProducer;
+    private final AuthIdProducer authIdProducer;
 
 
-    public AuthService(IAuthRepository repository, JwtTokenManager tokenManager, RegisterProducer registerProducer, ChangeStatusProducer changeStatusProducer) {
+    public AuthService(IAuthRepository repository, JwtTokenManager tokenManager, RegisterProducer registerProducer, ChangeStatusProducer changeStatusProducer, AuthIdProducer authIdProducer) {
         super(repository);
         this.repository = repository;
         this.tokenManager = tokenManager;
         this.registerProducer = registerProducer;
 
         this.changeStatusProducer = changeStatusProducer;
+        this.authIdProducer = authIdProducer;
     }
 
     public AuthRegisterResponseDto register(RegisterRequestDto dto,String adminPassword) {
@@ -126,6 +127,18 @@ public class AuthService extends ServiceManager<Auth,Long> {
         try {
             Auth auth = IAuthMapper.INSTANCE.toAuth(model);
             save(auth);
+            Optional<Auth> auth2 = repository.findOptionalByEmail(model.getEmail());
+
+            AddAuthIdModel addAuthIdModel = AddAuthIdModel.builder()
+                    .authId(auth2.get().getId())
+                    .email(auth.getEmail())
+                    .eRole(auth.getRole())
+                    .build();
+            System.out.println("**************************");
+            System.out.println(auth.getId());
+            System.out.println(addAuthIdModel.getAuthId());
+            System.out.println(addAuthIdModel.getEmail());
+            authIdProducer.sendAuthId(addAuthIdModel);
             return true;
         } catch (Exception e) {
             throw new AuthServiceException(EErrorType.CREATE_ERROR);

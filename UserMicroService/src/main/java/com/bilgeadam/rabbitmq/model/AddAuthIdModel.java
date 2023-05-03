@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 public class AddAuthIdModel {
     private Long authId;
     private ERole eRole;
+    private String email;
 }
