@@ -71,4 +71,8 @@ public class CompanyManagerController {
     public ResponseEntity<List<DemandsResponseDto>> findAllLeaveRequests (String token) {
         return ResponseEntity.ok(companyManagerService.findAllLeaveRequests(token));
     }
+    @PutMapping(PERSONNELLEAVEAPPROVAL)
+    public ResponseEntity<Boolean> leaveApproval(String token,Long leaveId,String onay) {
+        return ResponseEntity.ok(companyManagerService.leaveApproval(token,leaveId,onay));
+    }
 }

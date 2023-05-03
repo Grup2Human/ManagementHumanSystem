@@ -15,6 +15,7 @@ import javax.persistence.Enumerated;
 @AllArgsConstructor // 1....n kadar olan tüm parametreli constructorları tanımlar
 public class DemandsResponseDto {
     private Long personnelId;
+    private Long leaveId;
     //private Long companyManagerId;
     @Enumerated(EnumType.STRING)
     @Builder.Default
