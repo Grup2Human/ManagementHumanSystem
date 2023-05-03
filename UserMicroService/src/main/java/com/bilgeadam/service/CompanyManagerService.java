@@ -292,8 +292,8 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
           System.out.println(model.getAuthId());
           System.out.println("-------------------------");
           Optional<CompanyManager> companyManager = companyManagerRepository.findOptionalByEmail(model.getEmail());
-          if(companyManager.isPresent())
-              throw new UserManagerException(EErrorType.REGISTER_ERROR_EMAIL);
+          if(companyManager.isEmpty())
+              throw new UserManagerException(EErrorType.USER_NOT_FOUND);
           companyManager.get().setAuthId(model.getAuthId());
               update(companyManager.get());
 

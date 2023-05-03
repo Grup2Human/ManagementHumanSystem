@@ -1,7 +1,6 @@
 package com.bilgeadam.rabbitmq.producer;
 
 import com.bilgeadam.rabbitmq.model.AddAuthIdModel;
-import com.bilgeadam.rabbitmq.model.RegisterModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
