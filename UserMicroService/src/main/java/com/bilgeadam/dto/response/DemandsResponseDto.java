@@ -19,4 +19,6 @@ public class DemandsResponseDto {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private ELeaveApprovalStatus eLeaveApprovalStatus = ELeaveApprovalStatus.PENDINGAPPROVAL;
+    private String name;
+    private String surname;
 }

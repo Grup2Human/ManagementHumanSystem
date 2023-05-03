@@ -265,6 +265,7 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
     }
     public List<DemandsResponseDto> findAllLeaveRequests (String token) {
         Optional<Long> authId = tokenManager.getIdFromToken(token);
+        System.out.println(authId.get());
         if (authId.isEmpty())
             throw new UserManagerException(EErrorType.INVALID_TOKEN);
         List<Leave> leavelist = leaveService.findAll();
@@ -273,7 +274,7 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
         //---------------Buraya filtreleme eklemeliyiz
         List<DemandsResponseDto> demandsResponseDtoList = new ArrayList<>();
         leavelist.stream()
-                .filter(a->/*a.getCompanyManagerId()==authId.get() &&*/ a.getELeaveApprovalStatus().equals(ELeaveApprovalStatus.PENDINGAPPROVAL))
+                .filter(a-> a.getCompanyManagerId()==authId.get() && a.getELeaveApprovalStatus().equals(ELeaveApprovalStatus.PENDINGAPPROVAL))
                 .forEach(x -> {
             demandsResponseDtoList.add(ILeaveMapper.INSTANCE.todemandsResponseDto(x));
         });
