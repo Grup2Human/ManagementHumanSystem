@@ -16,4 +16,13 @@ public class RabbitMqConfig {
         return new Queue(queuePasswordMail);
     }
 
+    @Value("${rabbitmq.queuerepasswordmail}")
+    private String queueRepasswordMail;  // (kuyruk ismi) bu kuyruga baglayacagiz
+
+    /**  mail için queue oluşturalım:  */
+    @Bean
+    Queue repasswordMailQueue(){
+        return new Queue(queueRepasswordMail);
+    }
+
 }

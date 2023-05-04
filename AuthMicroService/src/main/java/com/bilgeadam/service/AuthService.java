@@ -8,19 +8,21 @@ import com.bilgeadam.exception.AuthServiceException;
 import com.bilgeadam.exception.EErrorType;
 import com.bilgeadam.mapper.IAuthMapper;
 import com.bilgeadam.rabbitmq.model.AddAuthIdModel;
+import com.bilgeadam.rabbitmq.model.CreatePersonMailModel;
 import com.bilgeadam.rabbitmq.model.CreatePersonModel;
 import com.bilgeadam.rabbitmq.producer.AuthIdProducer;
 import com.bilgeadam.rabbitmq.producer.ChangeStatusProducer;
+import com.bilgeadam.rabbitmq.producer.PasswordMailProducer;
 import com.bilgeadam.rabbitmq.producer.RegisterProducer;
 import com.bilgeadam.repository.IAuthRepository;
 import com.bilgeadam.repository.entity.Auth;
 import com.bilgeadam.repository.enums.ERole;
+import com.bilgeadam.utility.CodeGenerator;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import static com.bilgeadam.repository.enums.EStatus.ACTIVE;
@@ -32,9 +34,10 @@ public class AuthService extends ServiceManager<Auth,Long> {
     private final RegisterProducer registerProducer;
     private final ChangeStatusProducer changeStatusProducer;
     private final AuthIdProducer authIdProducer;
+    private final PasswordMailProducer passwordMailProducer;
 
 
-    public AuthService(IAuthRepository repository, JwtTokenManager tokenManager, RegisterProducer registerProducer, ChangeStatusProducer changeStatusProducer, AuthIdProducer authIdProducer) {
+    public AuthService(IAuthRepository repository, JwtTokenManager tokenManager, RegisterProducer registerProducer, ChangeStatusProducer changeStatusProducer, AuthIdProducer authIdProducer, PasswordMailProducer passwordMailProducer) {
         super(repository);
         this.repository = repository;
         this.tokenManager = tokenManager;
@@ -42,6 +45,7 @@ public class AuthService extends ServiceManager<Auth,Long> {
 
         this.changeStatusProducer = changeStatusProducer;
         this.authIdProducer = authIdProducer;
+        this.passwordMailProducer = passwordMailProducer;
     }
 
     public AuthRegisterResponseDto register(RegisterRequestDto dto,String adminPassword) {
@@ -143,5 +147,19 @@ public class AuthService extends ServiceManager<Auth,Long> {
         } catch (Exception e) {
             throw new AuthServiceException(EErrorType.CREATE_ERROR);
         }
+    }
+    public Boolean changePassword(String email) {
+        Optional<Auth> auth = repository.findOptionalByEmail(email);
+        if(auth.isEmpty())
+            throw new AuthServiceException(EErrorType.USER_NOT_FOUND);
+        auth.get().setPassword(CodeGenerator.generateCode());
+        update(auth.get());
+
+        CreatePersonMailModel mailModel = CreatePersonMailModel.builder()
+                .email(email)
+                .password(auth.get().getPassword())
+                .build();
+        passwordMailProducer.sendRepassword(mailModel);
+        return true;
     }
 }
