@@ -247,7 +247,7 @@ public class CompanyManagerService extends ServiceManager<CompanyManager,Long> {
                     .password(model.getPassword())
                     .build();
 
-            Personnel personnel = personnelService.save(IPersonnelMapper.INSTANCE.toPersonnel(model));
+            Personnel personnel = IPersonnelMapper.INSTANCE.toPersonnel(model);
             personnel.setSalary(dto.getSalary());
             personnelService.save(personnel);
             createPersonProducer.sendNewPerson(model);

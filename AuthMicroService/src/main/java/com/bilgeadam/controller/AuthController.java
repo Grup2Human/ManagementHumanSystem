@@ -52,4 +52,9 @@ public class AuthController {
         return ResponseEntity.ok("Genell birr mesajjj git pushladik yine");
     }
 
+    @PutMapping(FORGETPASSWORD)
+    public ResponseEntity<Boolean> forgetPassword(String email) {
+        return ResponseEntity.ok(authService.changePassword(email));
+    }
+
 }

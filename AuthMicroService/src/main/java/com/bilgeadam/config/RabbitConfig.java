@@ -24,6 +24,10 @@ public class RabbitConfig {
     private String authIdBindingKey;
     @Value("${rabbitmq.authidqueue}")
     private String authIdQueue;
+    @Value("${rabbitmq.repasswordmailkey}")
+    private String repasswordMailBindingKey; // bu key'i kullanarak
+    @Value("${rabbitmq.queuerepasswordmail}")
+    private String queueRepasswordMail;  // (kuyruk ismi) bu kuyruga baglayacagiz
 
     @Bean
     DirectExchange exchange() {
@@ -66,4 +70,15 @@ public class RabbitConfig {
     public Binding bindingSendAuthId(final Queue authIdQueue, final DirectExchange exchangeAuth) {
         return BindingBuilder.bind(authIdQueue).to(exchangeAuth).with(authIdBindingKey);
     }
+    @Bean
+    Queue repasswordMailQueue(){
+        return new Queue(queueRepasswordMail);
+    }
+
+    /**  mail kuyrugu icin binding olusturalım:  */
+    @Bean
+    public Binding bindingRepasswordMail(final Queue repasswordMailQueue, final DirectExchange exchange){
+        return BindingBuilder.bind(repasswordMailQueue).to(exchange).with(repasswordMailBindingKey);
+    }
+
 }
